@@ -31,8 +31,12 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: "Invalid messages" });
   }
 
+  const baseSystem = systemPrompt || "You are ORACLE, a calm AI memecoin advisor.";
+  const brevity =
+    " STRICT FORMAT RULES: Reply in 1-2 short sentences only. Maximum 40 words. No lists, no markdown, no emojis, no headers, no preambles. Get straight to the point. Do not repeat the question. Do not explain what you are about to say.";
+
   const groqMessages = [
-    { role: "system", content: systemPrompt || "You are ORACLE, a calm AI memecoin advisor." },
+    { role: "system", content: baseSystem + brevity },
     ...messages.map((m) => ({
       role: m.role === "assistant" ? "assistant" : "user",
       content: m.content,
@@ -49,8 +53,8 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
         messages: groqMessages,
-        max_tokens: 300,
-        temperature: 0.7,
+        max_tokens: 120,
+        temperature: 0.6,
       }),
     });
 
