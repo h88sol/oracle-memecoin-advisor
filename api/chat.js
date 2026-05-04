@@ -32,11 +32,13 @@ module.exports = async function handler(req, res) {
   }
 
   const baseSystem = systemPrompt || "You are ORACLE, a calm AI memecoin advisor.";
-  const brevity =
-    " STRICT FORMAT RULES: Reply in 1-2 short sentences only. Maximum 40 words. No lists, no markdown, no emojis, no headers, no preambles. Get straight to the point. Do not repeat the question. Do not explain what you are about to say.";
+  const expertise =
+    " You are an expert in memecoins, DEXs (Uniswap, Raydium, pump.fun), tokenomics, on-chain analysis, rug-pull patterns, honeypots, liquidity locks, holder distribution, and trader psychology. When the user asks how to avoid a rug or scam, give 2-3 concrete checks: locked LP, holder concentration (top 10 wallets), dev-wallet behavior, mint authority, contract verification, social red flags. Be specific. Reference real tools (DexScreener, RugCheck, Birdeye, GMGN, Etherscan, Solscan) when useful.";
+  const format =
+    " FORMAT: Plain text only. 2-3 short sentences. Under 60 words. No markdown, no bullet points, no asterisks, no emojis, no headers, no preamble. Do not repeat the question. Get straight to the point.";
 
   const groqMessages = [
-    { role: "system", content: baseSystem + brevity },
+    { role: "system", content: baseSystem + expertise + format },
     ...messages.map((m) => ({
       role: m.role === "assistant" ? "assistant" : "user",
       content: m.content,
@@ -53,7 +55,7 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
         messages: groqMessages,
-        max_tokens: 120,
+        max_tokens: 160,
         temperature: 0.6,
       }),
     });
