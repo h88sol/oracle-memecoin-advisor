@@ -194,11 +194,11 @@ function App() {
         <div className="brand">
           <div className="brand-dot" />
           <span className="brand-name">ORACLE</span>
-          <span className="brand-sub">/ memecoin advisory</span>
         </div>
         <nav className="nav-links">
           <a href="/" className="nav-link active">Speak</a>
           <a href="/docs.html" className="nav-link">Docs</a>
+          <a href="/docs.html#faq" className="nav-link">FAQ</a>
           <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); setMessages([]); setStatusText("Ask the orb anything."); }}>
             Reset
           </a>
@@ -277,7 +277,7 @@ function App() {
           </button>
         </div>
         <div className="disclaimer">
-          ORACLE provides perspective, not financial advice. Memecoins are high-risk. Do your own research.
+          Not financial advice. Do your own research.
         </div>
       </div>
 
