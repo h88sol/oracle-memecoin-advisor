@@ -3,69 +3,43 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>ORACLE — Docs</title>
+<title>ORACLE — Docs & FAQ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <style>
   .docs {
-    max-width: 760px;
+    max-width: 680px;
     margin: 0 auto;
-    padding: 40px 40px 120px;
+    padding: 60px 32px 120px;
     position: relative;
     z-index: 2;
   }
-  .docs-hero {
-    padding: 60px 0 50px;
-    border-bottom: 1px solid var(--line);
-    margin-bottom: 48px;
-  }
-  .eyebrow {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: hsl(var(--hue),100%,40%);
-    margin-bottom: 14px;
-  }
   .docs h1 {
     font-family: var(--serif);
-    font-size: clamp(44px, 6vw, 72px);
+    font-size: clamp(40px, 6vw, 60px);
     font-weight: 400;
-    line-height: 1.0;
+    line-height: 1.05;
     letter-spacing: -0.02em;
     margin: 0 0 20px;
     text-wrap: balance;
   }
-  .docs h1 em {
-    font-style: italic;
-    color: hsl(var(--hue),100%,38%);
-  }
-  .lede {
+  .docs .lede {
     font-family: var(--serif);
-    font-size: 22px;
-    line-height: 1.45;
+    font-size: 20px;
+    line-height: 1.5;
     color: var(--ink-soft);
     text-wrap: pretty;
-    max-width: 600px;
-    margin: 0;
+    margin: 0 0 56px;
   }
   .docs h2 {
     font-family: var(--serif);
-    font-size: 32px;
+    font-size: 26px;
     font-weight: 400;
     letter-spacing: -0.01em;
-    margin: 56px 0 16px;
-    line-height: 1.15;
-  }
-  .docs h3 {
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    margin: 28px 0 8px;
-    color: var(--ink);
+    margin: 56px 0 14px;
+    line-height: 1.2;
   }
   .docs p {
     font-size: 16px;
@@ -75,112 +49,47 @@
     text-wrap: pretty;
   }
   .docs strong { color: var(--ink); font-weight: 500; }
-  .grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin: 20px 0 8px;
-  }
-  .card {
-    padding: 20px;
-    background: rgba(255,255,255,0.65);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-  }
-  .card-num {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: hsl(var(--hue),100%,45%);
-    letter-spacing: 0.1em;
-    margin-bottom: 8px;
-  }
-  .card-h {
-    font-family: var(--serif);
-    font-size: 20px;
-    margin: 0 0 6px;
-    color: var(--ink);
-  }
-  .card-p { font-size: 14px; color: var(--ink-soft); line-height: 1.55; margin: 0; }
-  .qa { padding: 14px 0; border-top: 1px solid var(--line); }
+  .qa { padding: 18px 0; border-top: 1px solid var(--line); }
   .qa:last-child { border-bottom: 1px solid var(--line); }
   .qa-q {
     font-family: var(--serif);
-    font-size: 18px;
+    font-size: 19px;
     color: var(--ink);
-    margin: 0 0 4px;
+    margin: 0 0 6px;
+    line-height: 1.3;
   }
   .qa-a {
-    font-size: 14.5px;
+    font-size: 15px;
     color: var(--ink-soft);
-    line-height: 1.55;
+    line-height: 1.6;
     margin: 0;
   }
   .warn {
-    margin: 32px 0;
-    padding: 18px 20px;
+    margin: 40px 0 0;
+    padding: 16px 18px;
     border-left: 2px solid hsl(var(--hue),100%,50%);
-    background: hsla(var(--hue),100%,55%,0.05);
-    border-radius: 0 10px 10px 0;
+    background: hsla(var(--hue),100%,55%,0.04);
+    border-radius: 0 8px 8px 0;
   }
-  .warn-h {
+  .warn-p { font-size: 14.5px; color: var(--ink); line-height: 1.55; margin: 0; }
+  .back-link {
+    display: inline-block;
+    margin-top: 56px;
     font-family: var(--mono);
     font-size: 11px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: hsl(var(--hue),100%,35%);
-    margin-bottom: 6px;
-  }
-  .warn-p { font-size: 14px; color: var(--ink); line-height: 1.55; margin: 0; }
-  .footer-cta {
-    margin-top: 80px;
-    padding: 32px;
-    background: var(--ink);
-    border-radius: 18px;
-    text-align: center;
-    color: white;
-  }
-  .footer-cta h3 {
-    font-family: var(--serif);
-    font-size: 32px;
-    font-weight: 400;
-    color: white;
-    margin: 0 0 6px;
-    letter-spacing: -0.01em;
-  }
-  .footer-cta p { color: rgba(255,255,255,0.65); margin: 0 0 18px; font-size: 14px; }
-  .btn-primary {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 12px 22px;
-    background: hsl(var(--hue),100%,55%);
-    color: white;
-    border-radius: 999px;
+    color: hsl(var(--hue),100%,40%);
     text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all .2s;
   }
-  .btn-primary:hover { background: hsl(var(--hue),100%,62%); transform: translateY(-1px); }
-
-  .toc {
-    position: sticky;
-    top: 90px;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.06em;
-  }
-  .docs-layout {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
+  .back-link:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
 <div class="page">
   <div class="bg" aria-hidden>
     <div class="bg-grid"></div>
-    <div class="bg-glow" style="background: radial-gradient(60% 50% at 50% 0%, hsla(222,100%,55%,0.18), transparent 70%);"></div>
+    <div class="bg-glow" style="background: radial-gradient(60% 50% at 50% 0%, hsla(222,100%,55%,0.15), transparent 70%);"></div>
     <div class="bg-vignette"></div>
   </div>
 
@@ -188,95 +97,68 @@
     <div class="brand">
       <div class="brand-dot"></div>
       <span class="brand-name">ORACLE</span>
-      <span class="brand-sub">/ memecoin advisory</span>
     </div>
     <nav class="nav-links">
       <a href="index.html" class="nav-link">Speak</a>
       <a href="docs.html" class="nav-link active">Docs</a>
+      <a href="docs.html#faq" class="nav-link">FAQ</a>
     </nav>
   </header>
 
   <main class="docs">
-    <section class="docs-hero">
-      <div class="eyebrow">v1.0 · Documentation</div>
-      <h1>An <em>oracle</em> for the part of the market<br/>nobody wants to teach you.</h1>
-      <p class="lede">ORACLE is an AI advisor for memecoin traders. Ask it anything — about a token, a chart pattern, tokenomics, a rug you can't stop thinking about, the math behind a liquidity pool — by typing or by speaking. It answers in plain language, not financial advice.</p>
-    </section>
+    <h1>An AI advisor for memecoin traders.</h1>
+    <p class="lede">ORACLE is a voice-first AI agent built to help you navigate memecoins. Ask anything — about a token, a rug pattern, tokenomics, liquidity, on-chain signals — and it answers in plain language.</p>
 
-    <section>
-      <h2>What it does</h2>
-      <p>You speak or type a question. The orb listens, thinks, and answers — out loud, on screen, or both. It's a real AI under the hood, tuned to talk fluently about crypto: memecoin mechanics, on-chain signals, trader psychology, and the patterns that separate a launch from a rug.</p>
+    <h2>What it is</h2>
+    <p>A real AI under the hood, tuned to talk fluently about crypto. It's not a price feed and it doesn't shill coins. It's a thinking partner — the friend who actually knows what FDV means, who can explain why a chart looks suspicious, and who'll tell you straight when something smells like a rug.</p>
 
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-num">01</div>
-          <h3 class="card-h">Ask anything</h3>
-          <p class="card-p">Type or hold the mic. The orb hears you and answers in seconds — short, direct, and human.</p>
-        </div>
-        <div class="card">
-          <div class="card-num">02</div>
-          <h3 class="card-h">Real reasoning</h3>
-          <p class="card-p">Backed by a real language model. No scripted replies, no canned answers, no fake "predictions."</p>
-        </div>
-        <div class="card">
-          <div class="card-num">03</div>
-          <h3 class="card-h">Three voices</h3>
-          <p class="card-p">Switch between Oracle (calm, mystical), Analyst (measured), or Degen (chaotic-good) in Tweaks.</p>
-        </div>
-        <div class="card">
-          <div class="card-num">04</div>
-          <h3 class="card-h">Speaks back</h3>
-          <p class="card-p">Replies are read aloud through the orb. Toggle voice off if you want a quiet read.</p>
-        </div>
-      </div>
-    </section>
+    <h2>How to use it</h2>
+    <p><strong>Type or speak.</strong> Click the mic to talk, or just type a question and hit Enter. The orb listens, thinks, and answers — out loud and on screen.</p>
+    <p><strong>Three voices.</strong> Open the Tweaks panel to switch between Oracle (calm), Analyst (measured), or Degen (chaotic). Same brain, different vibe.</p>
+    <p><strong>Reset anytime.</strong> Hit Reset in the top nav to clear the conversation and start fresh.</p>
 
-    <section>
-      <h2>How to use it</h2>
-      <h3>Talking to the orb</h3>
-      <p>Click the microphone button to start a voice query. The orb's halo will turn pink while it's listening. Speak naturally, then pause — it'll send the moment you stop. Or just type into the input and hit Enter.</p>
-      <h3>The orb's states</h3>
-      <p><strong>Ready</strong> — calm pulse. <strong>Listening</strong> — fast pink pulse, ripples speed up. <strong>Divining</strong> — soft thinking pulse while the AI works. <strong>Speaking</strong> — tight rings race across the surface as it talks.</p>
-      <h3>Suggested prompts</h3>
-      <p>Below the orb on first load you'll see a few starter questions — tap one to skip the typing.</p>
-      <h3>Tweaks</h3>
-      <p>Open the Tweaks panel from the toolbar to change the orb's color hue, size, particle density, background intensity, the orb's personality, and whether it speaks aloud.</p>
-    </section>
+    <h2 id="faq">FAQ</h2>
 
-    <section>
-      <h2>What to ask</h2>
-      <div class="qa">
-        <p class="qa-q">"What makes a memecoin pump?"</p>
-        <p class="qa-a">Liquidity, attention, narrative, and timing. Ask the orb to walk you through any one of those.</p>
-      </div>
-      <div class="qa">
-        <p class="qa-q">"How do I read a token's holder distribution?"</p>
-        <p class="qa-a">Concentration, dev wallets, fresh wallets, locked LP — the orb explains what to look for and why.</p>
-      </div>
-      <div class="qa">
-        <p class="qa-q">"What's the difference between market cap and FDV?"</p>
-        <p class="qa-a">A common trap. The orb breaks it down without making you feel dumb for asking.</p>
-      </div>
-      <div class="qa">
-        <p class="qa-q">"Talk me out of aping into this thing."</p>
-        <p class="qa-a">Sometimes you just need someone to slow you down for ninety seconds.</p>
-      </div>
-    </section>
+    <div class="qa">
+      <p class="qa-q">Is this financial advice?</p>
+      <p class="qa-a">No. ORACLE gives perspective and education only. It will never tell you to buy or sell a specific coin. Sizing, timing, and risk are yours alone.</p>
+    </div>
 
-    <section>
-      <div class="warn">
-        <div class="warn-h">Important</div>
-        <p class="warn-p">ORACLE provides perspective and education, not financial advice. Memecoins are extremely high-risk — most go to zero. The orb will not tell you what to buy. Sizing, timing, and risk are yours alone. Do your own research.</p>
-      </div>
-    </section>
+    <div class="qa">
+      <p class="qa-q">Can it predict prices?</p>
+      <p class="qa-a">No, and don't trust anything that claims it can. ORACLE explains mechanics, patterns, and risk — not the future.</p>
+    </div>
 
-    <section class="footer-cta">
-      <h3>Ready to ask?</h3>
-      <p>The orb is waiting.</p>
-      <a href="index.html" class="btn-primary">Speak with ORACLE
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-    </section>
+    <div class="qa">
+      <p class="qa-q">How do I check if a token is a rug?</p>
+      <p class="qa-a">Ask the orb directly. It'll walk you through what to look at — locked liquidity, holder concentration, dev wallets, contract verification, mint authority. Use tools like DexScreener, RugCheck, or GMGN to verify.</p>
+    </div>
+
+    <div class="qa">
+      <p class="qa-q">What's a memecoin vs a shitcoin?</p>
+      <p class="qa-a">Loosely: memecoins live on culture and narrative; shitcoins are tokens with no purpose, often launched to dump. The line is blurry — ask the orb to break it down.</p>
+    </div>
+
+    <div class="qa">
+      <p class="qa-q">Does it know about specific coins?</p>
+      <p class="qa-a">It knows general crypto and memecoin mechanics. It doesn't pull live prices or chase tickers — for live data check DexScreener, Birdeye, or GMGN.</p>
+    </div>
+
+    <div class="qa">
+      <p class="qa-q">Is the voice real-time?</p>
+      <p class="qa-a">Yes — speech-in via your browser, speech-out via the orb. Toggle "Speak aloud" in Tweaks if you want a quiet read instead.</p>
+    </div>
+
+    <div class="qa">
+      <p class="qa-q">Why is the orb sometimes wrong?</p>
+      <p class="qa-a">It's an AI. It can be confidently wrong. Treat answers as a starting point, not gospel. Verify anything load-bearing on-chain.</p>
+    </div>
+
+    <div class="warn">
+      <p class="warn-p"><strong>Memecoins are extremely high-risk.</strong> Most go to zero. ORACLE will not tell you what to buy. Do your own research.</p>
+    </div>
+
+    <a href="index.html" class="back-link">← Back to the orb</a>
   </main>
 </div>
 </body>
