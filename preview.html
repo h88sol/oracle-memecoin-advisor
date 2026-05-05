@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>OCEAN — Visual Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<style>
+  body { display: grid; place-items: center; min-height: 100vh; }
+  .preview-wrap {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    padding: 60px 32px;
+    max-width: 1200px;
+    width: 100%;
+  }
+  .preview-card {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    backdrop-filter: blur(8px);
+    border-radius: 14px;
+    padding: 28px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    min-height: 360px;
+  }
+  .preview-stage {
+    flex: 1;
+    width: 100%;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    position: relative;
+  }
+  .preview-label {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+  .preview-name {
+    font-family: var(--sans);
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .preview-note {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.45;
+    text-align: center;
+    max-width: 240px;
+  }
+  .preview-back {
+    position: fixed;
+    top: 22px;
+    left: 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: hsl(var(--hue),85%,65%);
+    text-decoration: none;
+    z-index: 5;
+  }
+  .preview-title {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .preview-title h1 {
+    font-family: var(--sans);
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px;
+    color: var(--ink);
+  }
+  .preview-title p {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .hl { color: hsl(var(--hue), 100%, 50%); }
+
+  /* === Syringe (animated SVG) === */
+  .syringe-stage svg { width: 220px; height: 220px; filter: drop-shadow(0 0 24px hsla(var(--hue),100%,50%,0.45)); animation: gentleSway 6s ease-in-out infinite; }
+  .syringe-liquid {
+    fill: hsl(var(--hue), 95%, 48%);
+    animation: liquidLevel 4s ease-in-out infinite;
+    transform-origin: center;
+    filter: drop-shadow(0 0 6px hsla(var(--hue),100%,55%,0.7));
+  }
+  .syringe-line { stroke: hsl(var(--hue), 90%, 70%); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .syringe-line-soft { stroke: hsl(var(--hue), 70%, 55%); stroke-width: 1.5; fill: none; stroke-linecap: round; }
+  @keyframes liquidLevel {
+    0%, 100% { transform: scaleY(1); transform-origin: bottom; }
+    50% { transform: scaleY(0.85); transform-origin: bottom; }
+  }
+  @keyframes gentleSway {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-6px) rotate(-1deg); }
+  }
+
+  /* === Vial (animated SVG) === */
+  .vial-stage svg { width: 220px; height: 220px; filter: drop-shadow(0 0 28px hsla(var(--hue),100%,50%,0.5)); animation: floatGentle 6s ease-in-out infinite; }
+  .vial-liquid {
+    fill: url(#vialGrad);
+    filter: drop-shadow(0 0 10px hsla(var(--hue),100%,55%,0.7));
+  }
+  .vial-bubble {
+    fill: hsla(var(--hue), 100%, 80%, 0.85);
+    animation: bubble 3s ease-in-out infinite;
+  }
+  .vial-bubble:nth-child(2) { animation-delay: -1.5s; animation-duration: 4s; }
+  .vial-bubble:nth-child(3) { animation-delay: -2.7s; animation-duration: 5s; }
+  .vial-line { stroke: hsl(var(--hue), 80%, 75%); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .vial-cap { fill: hsl(var(--hue), 50%, 25%); stroke: hsl(var(--hue), 80%, 70%); stroke-width: 1.5; }
+  @keyframes bubble {
+    0% { transform: translateY(20px); opacity: 0; }
+    20% { opacity: 0.9; }
+    80% { opacity: 0.5; }
+    100% { transform: translateY(-30px); opacity: 0; }
+  }
+  @keyframes floatGentle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* === Blood cell (animated SVG) === */
+  .cell-stage svg { width: 220px; height: 220px; filter: drop-shadow(0 0 30px hsla(var(--hue),100%,45%,0.55)); animation: pulse 4s ease-in-out infinite; }
+  .cell-body { fill: url(#cellGrad); }
+  .cell-dimple { fill: hsl(var(--hue), 90%, 18%); opacity: 0.55; }
+  .cell-highlight { fill: hsla(var(--hue), 100%, 90%, 0.45); }
+  .cell-orbit {
+    stroke: hsla(var(--hue), 90%, 70%, 0.4);
+    stroke-width: 1;
+    fill: none;
+    stroke-dasharray: 3 6;
+    transform-origin: 110px 110px;
+    animation: rotate 20s linear infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 900px) {
+    .preview-wrap { grid-template-columns: 1fr; gap: 16px; padding: 60px 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="bg" aria-hidden>
+    <div class="bg-grid"></div>
+    <div class="bg-glow" style="background: radial-gradient(60% 50% at 50% 40%, hsla(8,90%,50%,0.18), transparent 70%);"></div>
+    <div class="bg-vignette"></div>
+  </div>
+
+  <a href="index.html" class="preview-back">← Back</a>
+
+  <div class="preview-wrap">
+    <div class="preview-title">
+      <h1>Three options. <span class="hl">Pick a vibe.</span></h1>
+      <p>Same color palette as the site — red glow, dark surface. Live previews with motion.</p>
+    </div>
+
+    <!-- 1. SYRINGE -->
+    <div class="preview-card">
+      <div class="preview-label">// OPTION 01</div>
+      <div class="preview-stage syringe-stage">
+        <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+          <!-- shaft body -->
+          <rect x="60" y="60" width="80" height="22" rx="3" class="syringe-line" />
+          <!-- liquid inside (animated level) -->
+          <rect x="63" y="63" width="74" height="16" rx="1.5" class="syringe-liquid" />
+          <!-- plunger -->
+          <line x1="60" y1="71" x2="32" y2="71" class="syringe-line" />
+          <rect x="20" y="62" width="14" height="18" rx="2" class="syringe-line" />
+          <!-- tick marks -->
+          <line x1="80" y1="63" x2="80" y2="68" class="syringe-line-soft" />
+          <line x1="95" y1="63" x2="95" y2="68" class="syringe-line-soft" />
+          <line x1="110" y1="63" x2="110" y2="68" class="syringe-line-soft" />
+          <line x1="125" y1="63" x2="125" y2="68" class="syringe-line-soft" />
+          <!-- nozzle + needle -->
+          <path d="M 140 68 L 150 65 L 150 77 L 140 74 Z" class="syringe-line" fill="hsla(8,90%,50%,0.25)" />
+          <line x1="150" y1="71" x2="200" y2="71" class="syringe-line" />
+          <!-- glowing droplet -->
+          <circle cx="200" cy="71" r="3" fill="hsl(var(--hue),100%,60%)" />
+        </svg>
+      </div>
+      <div class="preview-name">Syringe</div>
+      <div class="preview-note">Direct, edgy biohacker vibe. Liquid level animates. Glowing droplet at tip.</div>
+    </div>
+
+    <!-- 2. VIAL -->
+    <div class="preview-card">
+      <div class="preview-label">// OPTION 02</div>
+      <div class="preview-stage vial-stage">
+        <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="vialGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="hsl(8,100%,60%)" />
+              <stop offset="55%" stop-color="hsl(8,95%,42%)" />
+              <stop offset="100%" stop-color="hsl(8,90%,22%)" />
+            </linearGradient>
+          </defs>
+          <!-- cap -->
+          <rect x="86" y="32" width="48" height="14" rx="2" class="vial-cap" />
+          <rect x="92" y="46" width="36" height="6" class="vial-cap" />
+          <!-- glass body outline -->
+          <path d="M 80 56 L 80 175 Q 80 188 95 188 L 125 188 Q 140 188 140 175 L 140 56 Z" class="vial-line" fill="hsla(8,40%,15%,0.35)" />
+          <!-- liquid (3/4 full) -->
+          <path d="M 82 90 L 82 173 Q 82 186 95 186 L 125 186 Q 138 186 138 173 L 138 90 Z" class="vial-liquid" />
+          <!-- bubbles -->
+          <circle cx="100" cy="140" r="3" class="vial-bubble" />
+          <circle cx="120" cy="160" r="2.5" class="vial-bubble" />
+          <circle cx="110" cy="150" r="2" class="vial-bubble" />
+          <!-- highlight on glass -->
+          <line x1="86" y1="80" x2="86" y2="170" stroke="hsla(0,0%,100%,0.18)" stroke-width="2" stroke-linecap="round" />
+          <!-- label band -->
+          <rect x="80" y="115" width="60" height="22" fill="hsla(8,30%,8%,0.55)" />
+          <text x="110" y="130" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="hsla(8,90%,75%,0.85)" letter-spacing="1">PEPTIDE</text>
+        </svg>
+      </div>
+      <div class="preview-name">Vial</div>
+      <div class="preview-note">Premium clinical-grade feel. Bubbles rise, liquid glows. Less aggressive than a needle.</div>
+    </div>
+
+    <!-- 3. BLOOD CELL -->
+    <div class="preview-card">
+      <div class="preview-label">// OPTION 03</div>
+      <div class="preview-stage cell-stage">
+        <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="cellGrad" cx="40%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="hsl(8,100%,82%)" />
+              <stop offset="35%" stop-color="hsl(8,95%,52%)" />
+              <stop offset="80%" stop-color="hsl(8,90%,30%)" />
+              <stop offset="100%" stop-color="hsl(8,85%,16%)" />
+            </radialGradient>
+            <radialGradient id="dimpleGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="hsl(8,90%,20%)" />
+              <stop offset="100%" stop-color="hsla(8,80%,25%,0)" />
+            </radialGradient>
+          </defs>
+          <!-- orbital dashed ring (peptide chain hint) -->
+          <ellipse cx="110" cy="110" rx="98" ry="36" class="cell-orbit" />
+          <!-- main cell body -->
+          <ellipse cx="110" cy="110" rx="72" ry="68" class="cell-body" />
+          <!-- biconcave dimple (signature blood cell shape) -->
+          <ellipse cx="110" cy="110" rx="32" ry="30" fill="url(#dimpleGrad)" />
+          <!-- specular highlight -->
+          <ellipse cx="86" cy="84" rx="22" ry="14" class="cell-highlight" />
+        </svg>
+      </div>
+      <div class="preview-name">Red blood cell</div>
+      <div class="preview-note">Biological, on-brand for blood-type matching. Pulses softly, peptide-chain ring orbits.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
