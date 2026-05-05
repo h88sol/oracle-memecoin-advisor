@@ -41,7 +41,7 @@ const TOTAL_STEPS = 3;
 function App() {
   const [tweaks, setTweak] = useTweaks(
     /*EDITMODE-BEGIN*/ {
-      "hue": 222,
+      "hue": 8,
       "orbSize": 280,
       "particleIntensity": 1,
       "bgIntensity": 1
@@ -213,7 +213,7 @@ function App() {
 
       <TweaksPanel title="Tweaks">
         <TweakSection label="Orb" />
-        <TweakSlider label="Hue" min={200} max={260} step={1} value={tweaks.hue} onChange={(v) => setTweak("hue", v)} unit="°" />
+        <TweakSlider label="Hue" min={0} max={360} step={1} value={tweaks.hue} onChange={(v) => setTweak("hue", v)} unit="°" />
         <TweakSlider label="Size" min={200} max={420} step={10} value={tweaks.orbSize} onChange={(v) => setTweak("orbSize", v)} unit="px" />
         <TweakSlider label="Particles" min={0} max={1.5} step={0.05} value={tweaks.particleIntensity} onChange={(v) => setTweak("particleIntensity", v)} />
         <TweakSlider label="Background" min={0} max={1.5} step={0.05} value={tweaks.bgIntensity} onChange={(v) => setTweak("bgIntensity", v)} />
