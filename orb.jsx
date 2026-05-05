@@ -102,11 +102,11 @@ function Orb({ state, hue = 222, size = 380, intensity = 1 }) {
         cy,
         coreR
       );
-      core.addColorStop(0, `hsla(${hue}, 100%, 92%, 1)`);
-      core.addColorStop(0.18, `hsla(${hue}, 100%, 78%, 1)`);
-      core.addColorStop(0.45, `hsla(${hue}, 100%, 55%, 1)`);
-      core.addColorStop(0.78, `hsla(${hue}, 95%, 38%, 1)`);
-      core.addColorStop(1, `hsla(${hue}, 90%, 18%, 1)`);
+      core.addColorStop(0, `hsla(${hue}, 95%, 86%, 1)`);
+      core.addColorStop(0.18, `hsla(${hue}, 95%, 72%, 1)`);
+      core.addColorStop(0.45, `hsla(${hue}, 95%, 48%, 1)`);
+      core.addColorStop(0.78, `hsla(${hue}, 90%, 32%, 1)`);
+      core.addColorStop(1, `hsla(${hue}, 85%, 14%, 1)`);
       ctx.fillStyle = core;
       ctx.beginPath();
       ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
