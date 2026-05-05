@@ -1,14 +1,16 @@
 :root {
-  --hue: 222;
-  --bg: #f6f8fc;
-  --ink: #0a1330;
-  --ink-soft: #4a5578;
-  --ink-faint: #8a93b0;
-  --line: rgba(10, 19, 48, 0.08);
-  --line-strong: rgba(10, 19, 48, 0.16);
-  --blue: hsl(var(--hue), 100%, 50%);
-  --blue-deep: hsl(var(--hue), 100%, 30%);
-  --blue-soft: hsl(var(--hue), 100%, 96%);
+  --hue: 158;
+  --bg: #eef3ec;
+  --bg-deep: #e1e9de;
+  --ink: #14241b;
+  --ink-soft: #4a5a52;
+  --ink-faint: #8a988e;
+  --line: rgba(20, 36, 27, 0.08);
+  --line-strong: rgba(20, 36, 27, 0.16);
+  --blue: hsl(var(--hue), 60%, 38%);
+  --blue-deep: hsl(var(--hue), 70%, 24%);
+  --blue-soft: hsl(var(--hue), 50%, 94%);
+  --accent-warm: hsl(38, 70%, 50%);
   --serif: "Instrument Serif", "Times New Roman", serif;
   --sans: "Inter", -apple-system, system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, monospace;
@@ -39,15 +41,15 @@ body {
 .bg-grid {
   position: absolute; inset: 0;
   background-image:
-    linear-gradient(to right, rgba(10,19,48,0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(10,19,48,0.04) 1px, transparent 1px);
+    linear-gradient(to right, rgba(20,36,27,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(20,36,27,0.05) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
 }
 .bg-glow { position: absolute; inset: 0; }
 .bg-vignette {
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse 100% 80% at 50% 50%, transparent 50%, rgba(10,19,48,0.06) 100%);
+  background: radial-gradient(ellipse 100% 80% at 50% 50%, transparent 50%, rgba(20,36,27,0.06) 100%);
 }
 
 /* === Nav === */
@@ -93,7 +95,7 @@ body {
   border-radius: 999px;
   transition: all .2s;
 }
-.nav-link:hover { color: var(--ink); background: rgba(10,19,48,0.04); }
+.nav-link:hover { color: var(--ink); background: rgba(20,36,27,0.05); }
 .nav-link.active { color: hsl(var(--hue),100%,40%); background: hsla(var(--hue),100%,55%,0.08); }
 
 /* === Stage === */
@@ -356,17 +358,50 @@ body {
 .welcome { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; width: 100%; }
 .welcome-row {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 18px;
-  align-items: start;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: stretch;
   width: 100%;
   margin-top: 8px;
 }
-.welcome-cta {
+
+.cta-card {
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, hsla(var(--hue),50%,90%,0.7) 0%, rgba(255,255,255,0.7) 60%);
+  backdrop-filter: blur(8px);
+  border-radius: 14px;
+  padding: 14px 16px 14px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding-top: 6px;
+}
+.cta-tag {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+}
+.cta-title {
+  font-family: var(--sans);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+  line-height: 1.25;
+}
+.cta-desc {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  flex: 1;
+}
+.cta-btn {
+  align-self: flex-start;
+  margin-top: 4px;
 }
 
 /* Ask the orb mini-chat */
@@ -379,8 +414,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-height: 180px;
-  max-width: 420px;
+  min-height: 200px;
 }
 .ask-orb-head {
   display: flex; align-items: center; gap: 8px;
@@ -779,12 +813,12 @@ body {
   margin-left: auto;
 }
 .verdict-good {
-  background: rgba(40, 180, 90, 0.10);
-  color: hsl(140, 60%, 30%);
+  background: hsla(38, 80%, 55%, 0.14);
+  color: hsl(28, 75%, 32%);
 }
 .verdict-neutral {
-  background: hsla(var(--hue),100%,55%,0.10);
-  color: hsl(var(--hue),100%,38%);
+  background: hsla(var(--hue),50%,55%,0.10);
+  color: hsl(var(--hue),60%,28%);
 }
 .verdict-switch {
   background: rgba(220, 90, 60, 0.10);

@@ -290,8 +290,11 @@ function WelcomeStep({ onStart }) {
       </p>
 
       <div className="welcome-row">
-        <div className="welcome-cta">
-          <button className="btn btn-primary" onClick={onStart}>
+        <div className="cta-card">
+          <div className="cta-tag">// PRIMARY</div>
+          <div className="cta-title">Run a personalized analysis</div>
+          <div className="cta-desc">Match peptides to your blood type and goal in 3 quick questions.</div>
+          <button className="btn btn-primary cta-btn" onClick={onStart}>
             Start analysis →
           </button>
         </div>
