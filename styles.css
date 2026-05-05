@@ -1,11 +1,11 @@
 :root {
-  --hue: 222;
-  --bg: #f6f8fc;
-  --ink: #0a1330;
-  --ink-soft: #4a5578;
-  --ink-faint: #8a93b0;
-  --line: rgba(10, 19, 48, 0.08);
-  --line-strong: rgba(10, 19, 48, 0.16);
+  --hue: 8;
+  --bg: #fbf7f5;
+  --ink: #2a0d0d;
+  --ink-soft: #6e4a47;
+  --ink-faint: #a48a87;
+  --line: rgba(60, 18, 18, 0.08);
+  --line-strong: rgba(60, 18, 18, 0.16);
   --blue: hsl(var(--hue), 100%, 50%);
   --blue-deep: hsl(var(--hue), 100%, 30%);
   --blue-soft: hsl(var(--hue), 100%, 96%);
@@ -39,15 +39,15 @@ body {
 .bg-grid {
   position: absolute; inset: 0;
   background-image:
-    linear-gradient(to right, rgba(10,19,48,0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(10,19,48,0.04) 1px, transparent 1px);
+    linear-gradient(to right, rgba(60,18,18,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(60,18,18,0.04) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
 }
 .bg-glow { position: absolute; inset: 0; }
 .bg-vignette {
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse 100% 80% at 50% 50%, transparent 50%, rgba(10,19,48,0.06) 100%);
+  background: radial-gradient(ellipse 100% 80% at 50% 50%, transparent 50%, rgba(60,18,18,0.06) 100%);
 }
 
 /* === Nav === */
@@ -93,7 +93,7 @@ body {
   border-radius: 999px;
   transition: all .2s;
 }
-.nav-link:hover { color: var(--ink); background: rgba(10,19,48,0.04); }
+.nav-link:hover { color: var(--ink); background: rgba(60,18,18,0.05); }
 .nav-link.active { color: hsl(var(--hue),100%,40%); background: hsla(var(--hue),100%,55%,0.08); }
 
 /* === Stage === */
@@ -819,8 +819,8 @@ body {
   color: hsl(var(--hue),100%,38%);
 }
 .verdict-switch {
-  background: rgba(220, 90, 60, 0.10);
-  color: hsl(10, 65%, 42%);
+  background: hsla(38, 90%, 55%, 0.14);
+  color: hsl(28, 80%, 32%);
 }
 .current-summary {
   font-family: var(--sans);
