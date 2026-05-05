@@ -389,6 +389,29 @@ function HomeBelowFold({ onStart }) {
         </div>
       </section>
 
+      <section className="home-stats">
+        <div className="stat-block">
+          <div className="stat-num">16</div>
+          <div className="stat-label">peptides</div>
+          <div className="stat-sub">Pharmacology profiled</div>
+        </div>
+        <div className="stat-block">
+          <div className="stat-num">8</div>
+          <div className="stat-label">blood types</div>
+          <div className="stat-sub">Personalized matching</div>
+        </div>
+        <div className="stat-block">
+          <div className="stat-num">&lt;2<span className="stat-unit">s</span></div>
+          <div className="stat-label">analysis</div>
+          <div className="stat-sub">AI verdict in real time</div>
+        </div>
+        <div className="stat-block">
+          <div className="stat-num">100<span className="stat-unit">%</span></div>
+          <div className="stat-label">private</div>
+          <div className="stat-sub">Nothing stored</div>
+        </div>
+      </section>
+
       <section className="home-section why-blood-type">
         <div className="section-tag">// WHY BLOOD TYPE</div>
         <h2 className="section-title">Your blood type <span className="hl">shapes how peptides land</span>.</h2>
