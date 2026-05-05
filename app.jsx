@@ -41,7 +41,7 @@ const TOTAL_STEPS = 3;
 function App() {
   const [tweaks, setTweak] = useTweaks(
     /*EDITMODE-BEGIN*/ {
-      "hue": 8,
+      "hue": 145,
       "orbSize": 280,
       "particleIntensity": 1,
       "bgIntensity": 1
@@ -141,10 +141,6 @@ function App() {
       </header>
 
       <main className="quiz-stage">
-        <div className="quiz-orb">
-          <Orb state={orbState} hue={tweaks.hue} size={tweaks.orbSize} intensity={tweaks.particleIntensity} />
-        </div>
-
         <div className="quiz-content">
           {step === 0 && <WelcomeStep onStart={startQuiz} />}
 

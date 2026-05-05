@@ -1,16 +1,16 @@
 :root {
-  --hue: 8;
-  --bg: #0a0506;
-  --ink: #f3e8e6;
-  --ink-soft: #b39e9b;
-  --ink-faint: #756461;
-  --line: rgba(245, 232, 230, 0.08);
-  --line-strong: rgba(245, 232, 230, 0.18);
+  --hue: 145;
+  --bg: #060c08;
+  --ink: #e8f0ec;
+  --ink-soft: #9bb0a4;
+  --ink-faint: #647166;
+  --line: rgba(232, 240, 236, 0.08);
+  --line-strong: rgba(232, 240, 236, 0.18);
   --surface: rgba(255, 255, 255, 0.04);
   --surface-2: rgba(255, 255, 255, 0.07);
-  --blue: hsl(var(--hue), 90%, 52%);
-  --blue-deep: hsl(var(--hue), 80%, 35%);
-  --blue-soft: hsl(var(--hue), 50%, 22%);
+  --blue: hsl(var(--hue), 70%, 48%);
+  --blue-deep: hsl(var(--hue), 75%, 30%);
+  --blue-soft: hsl(var(--hue), 50%, 20%);
   --serif: "Instrument Serif", "Times New Roman", serif;
   --sans: "Inter", -apple-system, system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, monospace;
@@ -41,8 +41,8 @@ body {
 .bg-grid {
   position: absolute; inset: 0;
   background-image:
-    linear-gradient(to right, rgba(245,232,230,0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(245,232,230,0.04) 1px, transparent 1px);
+    linear-gradient(to right, rgba(232,240,236,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(232,240,236,0.04) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
 }
@@ -327,31 +327,22 @@ body {
   max-width: 720px;
 }
 
-/* === Quiz layout === */
+/* === Quiz layout (orb removed — content centered) === */
 .quiz-stage {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 60px;
-  padding: 24px 56px 0;
-  align-items: center;
-  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 32px 56px 0;
+  max-width: 1100px;
   width: 100%;
   margin: 0 auto;
-  min-height: 0;
-}
-.quiz-orb {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: float 8s ease-in-out infinite;
-  overflow: visible;
   position: relative;
 }
 .quiz-content {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  max-width: 640px;
+  width: 100%;
 }
 
 /* Welcome screen */
@@ -813,16 +804,16 @@ body {
   margin-left: auto;
 }
 .verdict-good {
-  background: hsla(140, 60%, 50%, 0.16);
-  color: hsl(140, 60%, 72%);
+  background: hsla(165, 80%, 50%, 0.16);
+  color: hsl(165, 70%, 70%);
 }
 .verdict-neutral {
-  background: hsla(var(--hue),90%,55%,0.16);
-  color: hsl(var(--hue),85%,72%);
+  background: hsla(42, 90%, 55%, 0.18);
+  color: hsl(42, 80%, 72%);
 }
 .verdict-switch {
-  background: hsla(38, 90%, 55%, 0.18);
-  color: hsl(38, 80%, 72%);
+  background: hsla(5, 80%, 55%, 0.18);
+  color: hsl(5, 75%, 72%);
 }
 .current-summary {
   font-family: var(--sans);
@@ -929,11 +920,8 @@ body {
 @media (max-width: 900px) {
   .nav { padding: 18px 20px; }
   .quiz-stage {
-    grid-template-columns: 1fr;
-    gap: 12px;
     padding: 16px 20px 0;
   }
-  .quiz-orb { transform: scale(0.7); margin-top: -40px; margin-bottom: -40px; }
   .quiz-footer { padding: 16px 20px 24px; }
   .option-grid.cols-3, .option-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
   .rec-grid { grid-template-columns: 1fr; }
