@@ -34,9 +34,7 @@
     text-wrap: balance;
     color: var(--ink);
   }
-  .faq-heading .hl {
-    color: hsl(var(--hue), 100%, 50%);
-  }
+  .faq-heading .hl { color: hsl(var(--hue), 100%, 50%); }
 
   .accordion {
     background: rgba(255,255,255,0.6);
@@ -45,9 +43,7 @@
     border-radius: 16px;
     overflow: hidden;
   }
-  .ac-item {
-    border-bottom: 1px solid var(--line);
-  }
+  .ac-item { border-bottom: 1px solid var(--line); }
   .ac-item:last-child { border-bottom: none; }
   .ac-item summary {
     list-style: none;
@@ -65,30 +61,17 @@
   .ac-item summary::-webkit-details-marker { display: none; }
   .ac-item summary:hover { background: rgba(10,19,48,0.02); }
   .ac-icon {
-    width: 22px;
-    height: 22px;
-    flex: 0 0 22px;
+    width: 22px; height: 22px; flex: 0 0 22px;
     position: relative;
     color: hsl(var(--hue), 100%, 50%);
     transition: transform .25s ease;
   }
   .ac-icon::before, .ac-icon::after {
-    content: "";
-    position: absolute;
-    background: currentColor;
-    border-radius: 1px;
+    content: ""; position: absolute; background: currentColor; border-radius: 1px;
     transition: transform .25s ease, opacity .2s ease;
   }
-  .ac-icon::before {
-    top: 50%; left: 0; right: 0;
-    height: 2px;
-    transform: translateY(-50%);
-  }
-  .ac-icon::after {
-    top: 0; bottom: 0; left: 50%;
-    width: 2px;
-    transform: translateX(-50%);
-  }
+  .ac-icon::before { top: 50%; left: 0; right: 0; height: 2px; transform: translateY(-50%); }
+  .ac-icon::after { top: 0; bottom: 0; left: 50%; width: 2px; transform: translateX(-50%); }
   .ac-item[open] .ac-icon { transform: rotate(45deg); }
 
   .ac-a {
@@ -99,15 +82,6 @@
     max-width: 760px;
   }
 
-  .warn {
-    margin: 48px 0 0;
-    padding: 16px 18px;
-    border-left: 2px solid hsl(var(--hue),100%,50%);
-    background: hsla(var(--hue),100%,55%,0.04);
-    border-radius: 0 8px 8px 0;
-  }
-  .warn-p { font-size: 14.5px; color: var(--ink); line-height: 1.55; margin: 0; }
-  .warn strong { color: var(--ink); font-weight: 500; }
   .back-link {
     display: inline-block;
     margin-top: 56px;
@@ -130,12 +104,12 @@
   </div>
 
   <header class="nav">
-    <a href="index.html" class="brand" aria-label="Back to the orb">
+    <a href="index.html" class="brand" aria-label="Back to home">
       <div class="brand-dot"></div>
       <span class="brand-name">OCEAN</span>
     </a>
     <nav class="nav-links">
-      <a href="index.html" class="nav-link">Speak</a>
+      <a href="index.html" class="nav-link">Analyze</a>
       <a href="docs.html" class="nav-link">Docs</a>
       <a href="faq.html" class="nav-link active">FAQ</a>
     </nav>
@@ -147,42 +121,42 @@
 
     <div class="accordion">
       <details class="ac-item">
-        <summary><span>Is this financial advice?</span><span class="ac-icon" aria-hidden="true"></span></summary>
-        <div class="ac-a">No. OCEAN gives perspective and education only. It will never tell you to buy or sell a specific coin. Sizing, timing, and risk are yours alone.</div>
+        <summary><span>Is OCEAN a replacement for a doctor?</span><span class="ac-icon" aria-hidden="true"></span></summary>
+        <div class="ac-a">No. OCEAN gives perspective and structured education — not prescriptions. Always work with a qualified physician before starting any peptide protocol, especially if you have underlying conditions or are on other medications.</div>
       </details>
 
       <details class="ac-item">
-        <summary><span>Can it predict prices?</span><span class="ac-icon" aria-hidden="true"></span></summary>
-        <div class="ac-a">No, and don't trust anything that claims it can. OCEAN explains mechanics, patterns, and risk — not the future.</div>
+        <summary><span>How does it decide what to recommend?</span><span class="ac-icon" aria-hidden="true"></span></summary>
+        <div class="ac-a">It looks at three things: your stated goal (recovery, body comp, sleep, etc.), your blood type (used as one signal among several based on emerging research), and your current peptide if any. It then matches against known peptide pharmacology and typical protocols.</div>
       </details>
 
       <details class="ac-item">
-        <summary><span>How do I check if a token is a rug?</span><span class="ac-icon" aria-hidden="true"></span></summary>
-        <div class="ac-a">Ask the orb directly. It'll walk you through what to look at — locked liquidity, holder concentration, dev wallets, contract verification, mint authority. Use tools like DexScreener, RugCheck, or GMGN to verify.</div>
+        <summary><span>Is the blood-type angle real science?</span><span class="ac-icon" aria-hidden="true"></span></summary>
+        <div class="ac-a">It's emerging research, not established clinical doctrine. Studies have shown blood type correlates with baseline IGF-1, inflammation markers, and metabolic response — which are all relevant to peptide therapy. We use it as one input, not the only one.</div>
       </details>
 
       <details class="ac-item">
-        <summary><span>What's a tech coin vs a memecoin?</span><span class="ac-icon" aria-hidden="true"></span></summary>
-        <div class="ac-a">Tech coins are projects with actual product, engineering, and utility — AI tokens, DePIN, L2s, oracles, infrastructure. Memecoins live on culture, narrative, and attention. OCEAN is specialized in tech coins but knows the memecoin meta cold — ask the orb either way.</div>
+        <summary><span>Does it know about specific peptides?</span><span class="ac-icon" aria-hidden="true"></span></summary>
+        <div class="ac-a">Yes — BPC-157, TB-500, Semaglutide, Tirzepatide, CJC-1295, Ipamorelin, Tesamorelin, GHK-Cu, Epitalon, MOTS-c, Selank, Semax, DSIP, Thymosin Alpha-1, PT-141, and the common stacks. If a peptide isn't in the menu, you can mention it via the orb chat (coming soon).</div>
       </details>
 
       <details class="ac-item">
-        <summary><span>Does it know about specific coins?</span><span class="ac-icon" aria-hidden="true"></span></summary>
-        <div class="ac-a">It knows general crypto, tech coin sectors (AI, DePIN, L2, RWA, etc.), and memecoin mechanics. It doesn't pull live prices or chase tickers — for live data check DexScreener, DefiLlama, Birdeye, or GMGN.</div>
+        <summary><span>What about side effects?</span><span class="ac-icon" aria-hidden="true"></span></summary>
+        <div class="ac-a">Every peptide has a profile. The analyzer flags major considerations relevant to your blood type and goal. For full side-effect lists, check primary sources — the analysis points you toward what to discuss with a clinician.</div>
       </details>
 
       <details class="ac-item">
-        <summary><span>Is the voice real-time?</span><span class="ac-icon" aria-hidden="true"></span></summary>
-        <div class="ac-a">Yes — speech-in via your browser, speech-out via the orb. Toggle "Speak aloud" in Tweaks if you want a quiet read instead.</div>
+        <summary><span>Can I track my dosing in OCEAN?</span><span class="ac-icon" aria-hidden="true"></span></summary>
+        <div class="ac-a">Not yet — for now OCEAN is an analyzer, not a tracker. A protocol-tracking feature is on the roadmap so you can log doses, sleep, recovery, and let the orb correlate over time.</div>
       </details>
 
       <details class="ac-item">
         <summary><span>Why is the orb sometimes wrong?</span><span class="ac-icon" aria-hidden="true"></span></summary>
-        <div class="ac-a">It's an AI. It can be confidently wrong. Treat answers as a starting point, not gospel. Verify anything load-bearing on-chain.</div>
+        <div class="ac-a">It's an AI. It can be confidently wrong. Use it as a starting point and verify anything load-bearing with a clinician or primary literature.</div>
       </details>
     </div>
 
-    <a href="index.html" class="back-link">← Back to the orb</a>
+    <a href="index.html" class="back-link">← Back to the analyzer</a>
   </main>
 </div>
 </body>

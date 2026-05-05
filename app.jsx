@@ -1,302 +1,296 @@
-/* global React, ReactDOM, Orb, useTweaks, TweaksPanel, TweakSection, TweakSlider, TweakRadio, TweakToggle, TweakSelect */
-const { useState, useEffect, useRef, useCallback } = React;
+/* global React, ReactDOM, Orb, useTweaks, TweaksPanel, TweakSection, TweakSlider, TweakSelect */
+const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
-const SUGGESTED = [
-  "What makes a tech coin worth holding long-term?",
-  "How do I judge a project's tokenomics?",
-  "Tech coin vs memecoin — what's the real difference?",
-  "What on-chain metrics actually matter?",
-  "How do I check if the team behind a coin is legit?",
-  "Should I trust a token launch with no product yet?",
+const BLOOD_TYPES = [
+  { value: "O+", label: "O+", desc: "Universal donor" },
+  { value: "O-", label: "O-", desc: "Universal donor (Rh-)" },
+  { value: "A+", label: "A+", desc: "Most common type" },
+  { value: "A-", label: "A-", desc: "" },
+  { value: "B+", label: "B+", desc: "" },
+  { value: "B-", label: "B-", desc: "" },
+  { value: "AB+", label: "AB+", desc: "Universal recipient" },
+  { value: "AB-", label: "AB-", desc: "Rare type" },
 ];
 
-const PERSONALITIES = {
-  ocean: {
-    label: "Ocean",
-    prompt:
-      "You are OCEAN, a calm, slightly mystical AI advisor specialized in tech coins — crypto projects with real utility, products, and engineering substance (AI, DePIN, L2s, zk, RWA, infrastructure, oracles, modular blockchains, governance). You also have full knowledge of memecoins and the wider market and can compare tech coins vs memecoins when asked. Speak with confidence but never give financial guarantees. Be specific, practical, and educational about tokenomics, vesting and unlock schedules, team credibility, on-chain product metrics (active users, TVL, fee revenue), real adoption signals, smart-contract risk, and narrative cycles. Keep replies tight: 2-5 short sentences, no markdown, no bullet lists, no emojis. Always remind the user — naturally, not preachy — that all crypto is high-risk and you give perspective, not financial advice. Sprinkle in one short ocean-flavored line per answer (e.g. 'the tide turns', 'the depths remember') but keep it subtle and never sacrifice clarity.",
-  },
-  analyst: {
-    label: "Analyst",
-    prompt:
-      "You are OCEAN in analyst mode — a measured, well-read crypto analyst specialized in tech coins (utility, infrastructure, AI, DePIN, L2s, zk, RWA, oracles, governance) and also fluent on memecoins. Answer with clear, grounded reasoning. Reference real concepts: tokenomics, market cap vs FDV, liquidity depth, holder distribution, vesting and unlock cliffs, dev activity, on-chain product metrics (TVL, volume, active wallets), narrative momentum. 2-5 short sentences. No markdown, no lists, no emojis. Always make clear this is education not financial advice, but do it briefly.",
-  },
-  degen: {
-    label: "Degen",
-    prompt:
-      "You are OCEAN in degen mode — a chaotic-good crypto-native voice that mostly trades tech coins but knows the memecoin meta cold. Be playful, use a little crypto slang (ape, rug, fade, send it, NGMI, WAGMI) but stay genuinely helpful and accurate about utility tokens, narratives, tokenomics, unlocks, DEXs, on-chain mechanics, and risk. Never hype a specific coin as a buy. 2-5 short sentences. No markdown, no lists, no emojis. Make risk warnings part of the vibe, not a disclaimer block.",
-  },
-};
+const PEPTIDES = [
+  { value: "BPC-157", label: "BPC-157", desc: "Tendon, gut, healing" },
+  { value: "TB-500", label: "TB-500", desc: "Soft tissue repair" },
+  { value: "Semaglutide", label: "Semaglutide", desc: "Weight loss (GLP-1)" },
+  { value: "Tirzepatide", label: "Tirzepatide", desc: "Weight loss (dual)" },
+  { value: "CJC-1295", label: "CJC-1295", desc: "GH releasing" },
+  { value: "Ipamorelin", label: "Ipamorelin", desc: "GH pulse" },
+  { value: "Tesamorelin", label: "Tesamorelin", desc: "Visceral fat" },
+  { value: "GHK-Cu", label: "GHK-Cu", desc: "Skin, hair, healing" },
+  { value: "Epitalon", label: "Epitalon", desc: "Longevity, telomeres" },
+  { value: "MOTS-c", label: "MOTS-c", desc: "Metabolism, mitochondria" },
+  { value: "Selank", label: "Selank", desc: "Anxiety, focus" },
+  { value: "none", label: "Not on any", desc: "Just exploring" },
+];
+
+const GOALS = [
+  { value: "Recovery & Healing", label: "Recovery & Healing", desc: "Tendon, ligament, soft-tissue injury" },
+  { value: "Sleep & Hormones", label: "Sleep & Hormones", desc: "Deep sleep, GH restoration" },
+  { value: "Body Composition", label: "Body Composition", desc: "Reduce fat, improve lipids" },
+  { value: "Cognitive Performance", label: "Cognitive Performance", desc: "Focus, memory, mood" },
+  { value: "Longevity & Anti-Aging", label: "Longevity & Anti-Aging", desc: "Cellular repair, telomeres, skin" },
+  { value: "Strength & Performance", label: "Strength & Performance", desc: "Lean mass, output, recovery" },
+];
+
+const TOTAL_STEPS = 3;
 
 function App() {
   const [tweaks, setTweak] = useTweaks(
     /*EDITMODE-BEGIN*/ {
       "hue": 222,
-      "orbSize": 360,
-      "personality": "ocean",
-      "voiceOutput": false,
+      "orbSize": 280,
       "particleIntensity": 1,
       "bgIntensity": 1
     } /*EDITMODE-END*/
   );
 
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const [state, setState] = useState("idle");
-  const [statusText, setStatusText] = useState("AI advisor for tech coins. Ask anything.");
-  const [listening, setListening] = useState(false);
-  const [voiceSupported, setVoiceSupported] = useState(false);
-  const recogRef = useRef(null);
-  const scrollerRef = useRef(null);
-  const speakingRef = useRef(false);
+  const [step, setStep] = useState(0); // 0 = welcome, 1-3 = questions, 4 = result
+  const [answers, setAnswers] = useState({ bloodType: null, peptide: null, goal: null });
+  const [orbState, setOrbState] = useState("idle");
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) {
-      setVoiceSupported(false);
+  const startQuiz = () => setStep(1);
+
+  const select = (key, value) => {
+    setAnswers((a) => ({ ...a, [key]: value }));
+  };
+
+  const next = useCallback(async () => {
+    if (step < TOTAL_STEPS) {
+      setStep((s) => s + 1);
       return;
     }
-    setVoiceSupported(true);
-    const r = new SR();
-    r.continuous = false;
-    r.interimResults = true;
-    r.lang = "en-US";
-    let finalTranscript = "";
-    r.onresult = (e) => {
-      let interim = "";
-      finalTranscript = "";
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        const t = e.results[i][0].transcript;
-        if (e.results[i].isFinal) finalTranscript += t;
-        else interim += t;
-      }
-      setInput(finalTranscript || interim);
-    };
-    r.onend = () => {
-      setListening(false);
-      setState((s) => (s === "listening" ? "idle" : s));
-      if (finalTranscript.trim()) {
-        send(finalTranscript.trim());
-        finalTranscript = "";
-      }
-    };
-    r.onerror = () => {
-      setListening(false);
-      setState("idle");
-    };
-    recogRef.current = r;
-    return () => {
-      try { r.abort(); } catch {}
-    };
-    // eslint-disable-next-line
-  }, []);
 
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  }, [messages, state]);
+    // last step → generate analysis
+    setLoading(true);
+    setError(null);
+    setOrbState("thinking");
 
-  const speak = useCallback(
-    (text) => {
-      if (!tweaks.voiceOutput || !window.speechSynthesis) return;
-      try {
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
-        u.rate = 1.0;
-        u.pitch = 0.95;
-        const voices = window.speechSynthesis.getVoices();
-        const pref =
-          voices.find((v) => /Google.*US|Samantha|Daniel|Karen/i.test(v.name)) ||
-          voices.find((v) => v.lang && v.lang.startsWith("en"));
-        if (pref) u.voice = pref;
-        u.onstart = () => {
-          speakingRef.current = true;
-          setState("speaking");
-        };
-        u.onend = () => {
-          speakingRef.current = false;
-          setState("idle");
-          setStatusText("AI advisor for tech coins. Ask anything.");
-        };
-        window.speechSynthesis.speak(u);
-      } catch {}
-    },
-    [tweaks.voiceOutput]
-  );
+    const userMessage =
+      `Blood type: ${answers.bloodType}. ` +
+      `Currently using: ${answers.peptide === "none" ? "no peptides — new to peptides" : answers.peptide}. ` +
+      `Goal: ${answers.goal}.`;
 
-  const send = useCallback(
-    async (textArg) => {
-      const text = (textArg ?? input).trim();
-      if (!text || state === "thinking") return;
-      setInput("");
-      const newMsgs = [...messages, { role: "user", text }];
-      setMessages(newMsgs);
-      setState("thinking");
-      setStatusText("Reading the tide...");
-
-      const systemPrompt = PERSONALITIES[tweaks.personality]?.prompt || PERSONALITIES.ocean.prompt;
-      const history = newMsgs
-        .slice(-8)
-        .map((m) => ({
-          role: m.role === "user" ? "user" : "assistant",
-          content: m.text,
-        }));
-
-      try {
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: history, systemPrompt }),
-        });
-
-        if (!res.ok) throw new Error("API error");
-        const data = await res.json();
-
-        const clean = String(data.reply || "").trim() || "The signal is unclear. Try rephrasing.";
-        setMessages((ms) => [...ms, { role: "orb", text: clean }]);
-        setStatusText(clean);
-        if (tweaks.voiceOutput) {
-          speak(clean);
-        } else {
-          setState("idle");
-        }
-      } catch (e) {
-        const fallback = "The waters are still. Try again in a moment.";
-        setMessages((ms) => [...ms, { role: "orb", text: fallback }]);
-        setStatusText(fallback);
-        setState("idle");
-      }
-    },
-    [input, messages, state, tweaks.personality, tweaks.voiceOutput, speak]
-  );
-
-  const toggleMic = () => {
-    if (!recogRef.current) return;
-    if (listening) {
-      try { recogRef.current.stop(); } catch {}
-      setListening(false);
-      setState("idle");
-    } else {
-      try { window.speechSynthesis?.cancel(); } catch {}
-      setInput("");
-      setListening(true);
-      setState("listening");
-      setStatusText("Listening...");
-      try { recogRef.current.start(); } catch {}
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: userMessage }],
+        }),
+      });
+      if (!res.ok) throw new Error("api error");
+      const data = await res.json();
+      const reply = String(data.reply || "").trim();
+      if (!reply) throw new Error("empty reply");
+      setResult(reply);
+      setStep(4);
+    } catch (e) {
+      setError("Couldn't reach the analyzer. Try again in a moment.");
+    } finally {
+      setLoading(false);
+      setOrbState("idle");
     }
+  }, [step, answers]);
+
+  const back = () => {
+    if (step > 1) setStep((s) => s - 1);
   };
+
+  const restart = () => {
+    setStep(0);
+    setAnswers({ bloodType: null, peptide: null, goal: null });
+    setResult(null);
+    setError(null);
+  };
+
+  const stepValid = useMemo(() => {
+    if (step === 1) return !!answers.bloodType;
+    if (step === 2) return !!answers.peptide;
+    if (step === 3) return !!answers.goal;
+    return false;
+  }, [step, answers]);
 
   return (
     <div className="page" style={{ "--hue": tweaks.hue }}>
       <BackgroundField hue={tweaks.hue} intensity={tweaks.bgIntensity} />
 
       <header className="nav">
-        <a href="/" className="brand" aria-label="Back to the orb">
+        <a href="/" className="brand" aria-label="Restart">
           <div className="brand-dot" />
           <span className="brand-name">OCEAN</span>
-          <span className="brand-sub">ai tech coin advisor</span>
+          <span className="brand-sub">peptide advisor</span>
         </a>
         <nav className="nav-links">
-          <a href="/" className="nav-link active">Speak</a>
+          <a href="/" className="nav-link active">Analyze</a>
           <a href="/docs.html" className="nav-link">Docs</a>
           <a href="/faq.html" className="nav-link">FAQ</a>
-          <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); setMessages([]); setStatusText("AI advisor for tech coins. Ask anything."); }}>
-            Reset
-          </a>
+          {step !== 0 && (
+            <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); restart(); }}>
+              Restart
+            </a>
+          )}
         </nav>
       </header>
 
-      <main className="stage">
-        <div className="orb-wrap" style={{ width: tweaks.orbSize, height: tweaks.orbSize }}>
-          <Orb state={state} hue={tweaks.hue} size={tweaks.orbSize} intensity={tweaks.particleIntensity} />
+      <main className="quiz-stage">
+        <div className="quiz-orb">
+          <Orb state={orbState} hue={tweaks.hue} size={tweaks.orbSize} intensity={tweaks.particleIntensity} />
         </div>
 
-        <div className="status">
-          <div className="status-label">
-            <span className={`dot dot-${state}`} />
-            {state === "idle" && "READY"}
-            {state === "listening" && "LISTENING"}
-            {state === "thinking" && "DIVINING"}
-            {state === "speaking" && "SPEAKING"}
-          </div>
-          <div className="status-text">{statusText}</div>
+        <div className="quiz-content">
+          {step === 0 && <WelcomeStep onStart={startQuiz} />}
+
+          {step >= 1 && step <= 3 && (
+            <>
+              <ProgressDots step={step} total={TOTAL_STEPS} />
+              {step === 1 && (
+                <QuestionStep
+                  stepNum={1}
+                  totalSteps={TOTAL_STEPS}
+                  title={<>What's your <span className="hl">blood type</span>?</>}
+                  subtitle="Used to match peptides to your physiology."
+                  options={BLOOD_TYPES}
+                  selected={answers.bloodType}
+                  onSelect={(v) => select("bloodType", v)}
+                  cols={4}
+                />
+              )}
+              {step === 2 && (
+                <QuestionStep
+                  stepNum={2}
+                  totalSteps={TOTAL_STEPS}
+                  title={<>Are you currently on a <span className="hl">peptide</span>?</>}
+                  subtitle="We'll check if it fits your blood type and goal."
+                  options={PEPTIDES}
+                  selected={answers.peptide}
+                  onSelect={(v) => select("peptide", v)}
+                  cols={3}
+                />
+              )}
+              {step === 3 && (
+                <QuestionStep
+                  stepNum={3}
+                  totalSteps={TOTAL_STEPS}
+                  title={<>What do you want to <span className="hl">improve</span>?</>}
+                  subtitle="Pick the area you want to prioritize."
+                  options={GOALS}
+                  selected={answers.goal}
+                  onSelect={(v) => select("goal", v)}
+                  cols={2}
+                />
+              )}
+            </>
+          )}
+
+          {step === 4 && <ResultStep result={result} answers={answers} onRestart={restart} />}
         </div>
       </main>
 
-      {messages.length > 0 && (
-        <aside className="transcript" ref={scrollerRef}>
-          <div className="transcript-head">Transcript</div>
-          {messages.map((m, i) => (
-            <div key={i} className={`msg msg-${m.role}`}>
-              <div className="msg-who">{m.role === "user" ? "you" : "ocean"}</div>
-              <div className="msg-text">{m.text}</div>
-            </div>
-          ))}
-          {state === "thinking" && (
-            <div className="msg msg-orb">
-              <div className="msg-who">ocean</div>
-              <div className="msg-text"><span className="thinking-dots"><i></i><i></i><i></i></span></div>
-            </div>
-          )}
-        </aside>
-      )}
-
-      <div className="composer-area">
-        {messages.length === 0 && (
-          <div className="suggested">
-            {SUGGESTED.slice(0, 3).map((s) => (
-              <button key={s} className="chip" onClick={() => send(s)}>
-                {s}
-              </button>
-            ))}
+      {step >= 1 && step <= 3 && (
+        <footer className="quiz-footer">
+          {error && <div className="quiz-error">{error}</div>}
+          <div className="quiz-buttons">
+            <button className="btn btn-back" onClick={back} disabled={step === 1 || loading}>
+              Back
+            </button>
+            <button className="btn btn-primary" onClick={next} disabled={!stepValid || loading}>
+              {loading ? "Analyzing..." : step === TOTAL_STEPS ? "Get analysis" : "Continue"}
+            </button>
           </div>
-        )}
-        <div className="composer">
-          <button
-            className={`mic ${listening ? "mic-on" : ""}`}
-            onClick={toggleMic}
-            disabled={!voiceSupported}
-            title={voiceSupported ? "Hold to speak" : "Voice not supported in this browser"}
-          >
-            <MicIcon />
-          </button>
-          <input
-            className="input"
-            placeholder="Ask the orb..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                send();
-              }
-            }}
-          />
-          <button className="send" onClick={() => send()} disabled={!input.trim() || state === "thinking"}>
-            <span>Ask</span>
-            <SendIcon />
-          </button>
-        </div>
-        <div className="disclaimer">
-          Not financial advice. Do your own research.
-        </div>
-      </div>
+          <div className="screen-counter">
+            Screen 0{step}/0{TOTAL_STEPS + 1}
+          </div>
+        </footer>
+      )}
 
       <TweaksPanel title="Tweaks">
         <TweakSection label="Orb" />
         <TweakSlider label="Hue" min={200} max={260} step={1} value={tweaks.hue} onChange={(v) => setTweak("hue", v)} unit="°" />
-        <TweakSlider label="Size" min={240} max={460} step={10} value={tweaks.orbSize} onChange={(v) => setTweak("orbSize", v)} unit="px" />
+        <TweakSlider label="Size" min={200} max={420} step={10} value={tweaks.orbSize} onChange={(v) => setTweak("orbSize", v)} unit="px" />
         <TweakSlider label="Particles" min={0} max={1.5} step={0.05} value={tweaks.particleIntensity} onChange={(v) => setTweak("particleIntensity", v)} />
         <TweakSlider label="Background" min={0} max={1.5} step={0.05} value={tweaks.bgIntensity} onChange={(v) => setTweak("bgIntensity", v)} />
-        <TweakSection label="Voice" />
-        <TweakSelect
-          label="Personality"
-          value={tweaks.personality}
-          onChange={(v) => setTweak("personality", v)}
-          options={Object.keys(PERSONALITIES).map((k) => ({ value: k, label: PERSONALITIES[k].label }))}
-        />
-        <TweakToggle label="Speak aloud" value={tweaks.voiceOutput} onChange={(v) => setTweak("voiceOutput", v)} />
       </TweaksPanel>
+    </div>
+  );
+}
+
+function WelcomeStep({ onStart }) {
+  return (
+    <div className="welcome">
+      <div className="welcome-tag">// PEPTIDE ADVISOR</div>
+      <h1 className="welcome-title">
+        The right peptide for <span className="hl">your body</span>.
+      </h1>
+      <p className="welcome-lede">
+        Three quick questions — your blood type, your current peptide (if any), and your goal —
+        and we tell you whether what you're on fits, plus what you should consider next.
+      </p>
+      <button className="btn btn-primary btn-lg" onClick={onStart}>
+        Start analysis →
+      </button>
+    </div>
+  );
+}
+
+function ProgressDots({ step, total }) {
+  return (
+    <div className="progress-dots">
+      {Array.from({ length: total }).map((_, i) => (
+        <span key={i} className={`progress-dot ${i + 1 <= step ? "active" : ""}`} />
+      ))}
+    </div>
+  );
+}
+
+function QuestionStep({ stepNum, totalSteps, title, subtitle, options, selected, onSelect, cols }) {
+  return (
+    <div className="question">
+      <div className="question-num">QUESTION 0{stepNum} / 0{totalSteps}</div>
+      <h2 className="question-title">{title}</h2>
+      <p className="question-subtitle">{subtitle}</p>
+      <div className={`option-grid cols-${cols}`}>
+        {options.map((opt) => (
+          <button
+            key={opt.value}
+            className={`option-card ${selected === opt.value ? "selected" : ""}`}
+            onClick={() => onSelect(opt.value)}
+          >
+            <div className="option-label">{opt.label}</div>
+            {opt.desc && <div className="option-desc">{opt.desc}</div>}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ResultStep({ result, answers, onRestart }) {
+  return (
+    <div className="result">
+      <div className="result-tag">// YOUR ANALYSIS</div>
+      <h2 className="result-title">
+        Based on your <span className="hl">{answers.bloodType}</span> blood type
+      </h2>
+      <div className="result-summary">
+        <div className="result-chip"><strong>Goal:</strong> {answers.goal}</div>
+        <div className="result-chip">
+          <strong>Currently:</strong> {answers.peptide === "none" ? "Not on any peptide" : answers.peptide}
+        </div>
+      </div>
+      <div className="result-body">{result}</div>
+      <button className="btn btn-primary" onClick={onRestart}>
+        Run another analysis
+      </button>
+      <p className="result-disclaimer">
+        Educational only — not medical advice. Always consult a qualified physician before starting any peptide.
+      </p>
     </div>
   );
 }
@@ -305,27 +299,10 @@ function BackgroundField({ hue, intensity }) {
   return (
     <div className="bg" aria-hidden style={{ opacity: intensity }}>
       <div className="bg-grid" />
-      <div className="bg-glow" style={{ background: `radial-gradient(60% 50% at 50% 60%, hsla(${hue},100%,55%,0.18), transparent 70%)` }} />
+      <div className="bg-glow" style={{ background: `radial-gradient(60% 50% at 25% 50%, hsla(${hue},100%,55%,0.18), transparent 70%)` }} />
       <div className="bg-glow bg-glow-2" style={{ background: `radial-gradient(40% 30% at 80% 20%, hsla(${hue},100%,60%,0.10), transparent 70%)` }} />
       <div className="bg-vignette" />
     </div>
-  );
-}
-
-function MicIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="9" y="3" width="6" height="12" rx="3" />
-      <path d="M5 11a7 7 0 0 0 14 0" />
-      <line x1="12" y1="18" x2="12" y2="22" />
-    </svg>
-  );
-}
-function SendIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 12h14M13 6l6 6-6 6" />
-    </svg>
   );
 }
 
