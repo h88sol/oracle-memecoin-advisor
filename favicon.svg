@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <rect width="256" height="256" fill="#0a0508"/>
+  <g transform="rotate(-35 128 128)" stroke="#a02828" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- needle tip -->
+    <line x1="32" y1="128" x2="74" y2="128"/>
+    <!-- nozzle / bevel -->
+    <path d="M 74 118 L 88 118 L 88 138 L 74 138 Z"/>
+    <!-- chamber body -->
+    <rect x="88" y="100" width="100" height="56" rx="3"/>
+    <!-- liquid fill (lower portion) -->
+    <rect x="94" y="120" width="58" height="32" rx="1" fill="#751515" stroke="none"/>
+    <!-- chamber flange -->
+    <line x1="190" y1="90" x2="190" y2="166"/>
+    <!-- plunger rod -->
+    <line x1="190" y1="128" x2="220" y2="128"/>
+    <!-- plunger thumb rest -->
+    <line x1="220" y1="116" x2="220" y2="140"/>
+  </g>
+</svg>
