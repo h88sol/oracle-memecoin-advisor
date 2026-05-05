@@ -32,7 +32,7 @@ function App() {
   const [tweaks, setTweak] = useTweaks(
     /*EDITMODE-BEGIN*/ {
       "hue": 222,
-      "orbSize": 360,
+      "orbSize": 460,
       "personality": "ocean",
       "voiceOutput": true,
       "particleIntensity": 1,
@@ -112,6 +112,7 @@ function App() {
         u.onstart = () => {
           speakingRef.current = true;
           setState("speaking");
+          setStatusText("Speaking...");
         };
         u.onend = () => {
           speakingRef.current = false;
@@ -154,16 +155,16 @@ function App() {
 
         const clean = String(data.reply || "").trim() || "The signal is unclear. Try rephrasing.";
         setMessages((ms) => [...ms, { role: "orb", text: clean }]);
-        setStatusText(clean);
         if (tweaks.voiceOutput) {
           speak(clean);
         } else {
           setState("idle");
+          setStatusText("AI advisor for tech coins. Ask anything.");
         }
       } catch (e) {
         const fallback = "The waters are still. Try again in a moment.";
         setMessages((ms) => [...ms, { role: "orb", text: fallback }]);
-        setStatusText(fallback);
+        setStatusText("Connection failed. Try again.");
         setState("idle");
       }
     },
