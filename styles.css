@@ -98,6 +98,33 @@ body {
 .nav-link:hover { color: var(--ink); background: var(--surface); }
 .nav-link.active { color: hsl(var(--hue),85%,65%); background: hsla(var(--hue),100%,55%,0.08); }
 
+.buy-btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: hsl(var(--hue), 85%, 40%);
+  color: #fff;
+  border: 1px solid hsl(var(--hue), 90%, 55%);
+  cursor: pointer;
+  transition: all .15s;
+  font-weight: 500;
+  margin-left: 6px;
+  box-shadow: 0 0 16px hsla(var(--hue), 90%, 45%, 0.35);
+}
+.buy-btn:hover {
+  background: hsl(var(--hue), 90%, 48%);
+  transform: translateY(-1px);
+  box-shadow: 0 0 22px hsla(var(--hue), 95%, 50%, 0.5);
+}
+.buy-btn-copied {
+  background: hsl(140, 60%, 38%);
+  border-color: hsl(140, 70%, 55%);
+  box-shadow: 0 0 16px hsla(140, 70%, 45%, 0.35);
+}
+
 /* === Stage === */
 .stage {
   display: flex; flex-direction: column; align-items: center;

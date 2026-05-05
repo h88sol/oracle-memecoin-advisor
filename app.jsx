@@ -54,6 +54,23 @@ function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [caCopied, setCaCopied] = useState(false);
+
+  const CONTRACT_ADDRESS = "BZWbMU57Lq8Bun6WxVpB2kuUoKiNxwBaLZMzVajqpump";
+  const copyContract = () => {
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(CONTRACT_ADDRESS);
+    } else {
+      const ta = document.createElement("textarea");
+      ta.value = CONTRACT_ADDRESS;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch {}
+      document.body.removeChild(ta);
+    }
+    setCaCopied(true);
+    setTimeout(() => setCaCopied(false), 1800);
+  };
 
   const startQuiz = () => setStep(1);
 
@@ -136,6 +153,9 @@ function App() {
               Restart
             </a>
           )}
+          <button className={`buy-btn ${caCopied ? "buy-btn-copied" : ""}`} onClick={copyContract}>
+            {caCopied ? "Copied ✓" : "Buy peptype"}
+          </button>
         </nav>
       </header>
 

@@ -80,6 +80,7 @@
       <a href="index.html" class="nav-link">Analyze</a>
       <a href="docs.html" class="nav-link active">Docs</a>
       <a href="faq.html" class="nav-link">FAQ</a>
+    <button class="buy-btn" onclick="copyPeptypeCA(this)">Buy peptype</button>
     </nav>
   </header>
 
@@ -106,5 +107,27 @@
     <a href="index.html" class="back-link">← Back to the analyzer</a>
   </main>
 </div>
+<script>
+function copyPeptypeCA(btn) {
+  const ca = "BZWbMU57Lq8Bun6WxVpB2kuUoKiNxwBaLZMzVajqpump";
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ca);
+  } else {
+    const ta = document.createElement("textarea");
+    ta.value = ca;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+  const orig = btn.textContent;
+  btn.textContent = "Copied ✓";
+  btn.classList.add("buy-btn-copied");
+  setTimeout(function () {
+    btn.textContent = orig;
+    btn.classList.remove("buy-btn-copied");
+  }, 1800);
+}
+</script>
 </body>
 </html>
