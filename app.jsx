@@ -207,7 +207,7 @@ function App() {
       </header>
 
       <main className="stage">
-        <div className="orb-wrap" style={{ width: tweaks.orbSize * 2.2, height: tweaks.orbSize * 2.2 }}>
+        <div className="orb-wrap" style={{ width: tweaks.orbSize, height: tweaks.orbSize }}>
           <Orb state={state} hue={tweaks.hue} size={tweaks.orbSize} intensity={tweaks.particleIntensity} />
         </div>
 

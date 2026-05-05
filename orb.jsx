@@ -167,15 +167,23 @@ function Orb({ state, hue = 222, size = 380, intensity = 1 }) {
     <div
       style={{
         position: "relative",
-        width: size * 2.2,
-        height: size * 2.2,
+        width: size,
+        height: size,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         pointerEvents: "none",
       }}
     >
-      <canvas ref={canvasRef} style={{ position: "absolute", inset: 0 }} />
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: "absolute",
+          left: "50%",
+          top: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      />
     </div>
   );
 }

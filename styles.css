@@ -106,8 +106,8 @@ body {
 }
 .orb-wrap {
   display: flex; align-items: center; justify-content: center;
-  margin-top: -20px;
   animation: float 8s ease-in-out infinite;
+  overflow: visible;
 }
 @keyframes float {
   0%, 100% { transform: translateY(0); }
@@ -115,7 +115,7 @@ body {
 }
 
 .status {
-  margin-top: -40px;
+  margin-top: 28px;
   max-width: 640px;
   display: flex; flex-direction: column; align-items: center; gap: 14px;
   position: relative;
@@ -225,7 +225,7 @@ body {
 
 /* === Composer === */
 .composer-area {
-  padding: 24px 40px 32px;
+  padding: 16px 40px 28px;
   display: flex; flex-direction: column; align-items: center; gap: 14px;
   position: relative; z-index: 3;
 }
