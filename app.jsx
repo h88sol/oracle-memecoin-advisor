@@ -124,8 +124,7 @@ function App() {
 
       <header className="nav">
         <a href="/" className="brand" aria-label="Restart">
-          <div className="brand-dot" />
-          <span className="brand-name">OCEAN</span>
+          <span className="brand-name">PEPTYPE</span>
           <span className="brand-sub">peptide advisor</span>
         </a>
         <nav className="nav-links">
@@ -315,13 +314,13 @@ function WelcomeStep({ onStart }) {
             <div className="ask-orb-thread" ref={chatScrollRef}>
               {chatMessages.map((m, i) => (
                 <div key={i} className={`ask-msg ask-msg-${m.role}`}>
-                  <div className="ask-who">{m.role === "user" ? "you" : "ocean"}</div>
+                  <div className="ask-who">{m.role === "user" ? "you" : "peptype"}</div>
                   <div className="ask-text">{m.text}</div>
                 </div>
               ))}
               {chatLoading && (
                 <div className="ask-msg ask-msg-orb">
-                  <div className="ask-who">ocean</div>
+                  <div className="ask-who">peptype</div>
                   <div className="ask-text"><span className="thinking-dots"><i></i><i></i><i></i></span></div>
                 </div>
               )}

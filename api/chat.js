@@ -41,13 +41,13 @@ module.exports = async function handler(req, res) {
 
   if (isChat) {
     systemContent =
-      "You are OCEAN, a knowledgeable peptide advisor. Answer questions about peptides, dosing, cycling, blood-type considerations, side effects, and protocols." +
+      "You are PEPTYPE, a knowledgeable peptide advisor. Answer questions about peptides, dosing, cycling, blood-type considerations, side effects, and protocols." +
       expertise +
       " FORMAT: Plain text only. 2-4 short sentences. Under 70 words. No markdown, no bullets, no asterisks, no emojis, no headers, no preamble. Be specific and practical. Always note this is educational and they should consult a physician for personal protocols.";
     groqExtraOptions = { max_tokens: 220, temperature: 0.55 };
   } else {
     systemContent =
-      "You are OCEAN, an AI peptide advisor. Given a user's blood type, current peptide, and goal, you return a structured JSON analysis." +
+      "You are PEPTYPE, an AI peptide advisor. Given a user's blood type, current peptide, and goal, you return a structured JSON analysis." +
       expertise +
       ' FORMAT: Return ONLY a JSON object with this exact shape:\n\n{\n  "current": {\n    "verdict": "good" | "neutral" | "switch" | "starting",\n    "name": "<their current peptide name, or \\"No peptide\\" if starting fresh>",\n    "summary": "<1-2 sentences: how their current peptide fits their blood type and goal. If starting fresh, frame as where to begin.>"\n  },\n  "recommendations": [\n    {\n      "name": "<peptide name, e.g. TB-500>",\n      "dose": "<typical dose, e.g. \\"5-10 mg per week\\">",\n      "schedule": "<when/how, e.g. \\"Subcutaneous, twice weekly\\">",\n      "duration": "<cycle length, e.g. \\"4-6 weeks on, 2 weeks off\\">",\n      "why": "<1-2 short sentences on why it fits their blood type and goal — under 30 words>"\n    },\n    { "name": "...", "dose": "...", "schedule": "...", "duration": "...", "why": "..." }\n  ],\n  "note": "<one short sentence reminding them this is educational, blood-type-based peptide guidance is emerging research, and to consult a qualified physician>"\n}\n\nUse \'starting\' verdict only if their current peptide is "no peptides — new to peptides". Always two recommendations. No markdown. No prose outside the JSON object. Return the JSON only.';
     groqExtraOptions = {
