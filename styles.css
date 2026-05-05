@@ -1,16 +1,16 @@
 :root {
-  --hue: 145;
-  --bg: #f0f5f1;
-  --ink: #0c1f14;
-  --ink-soft: #4f6356;
-  --ink-faint: #8a9a8e;
-  --line: rgba(12, 31, 20, 0.08);
-  --line-strong: rgba(12, 31, 20, 0.16);
-  --surface: rgba(12, 31, 20, 0.025);
-  --surface-2: rgba(255, 255, 255, 0.7);
-  --blue: hsl(var(--hue), 65%, 32%);
-  --blue-deep: hsl(var(--hue), 75%, 22%);
-  --blue-soft: hsl(var(--hue), 50%, 95%);
+  --hue: 8;
+  --bg: #07040a;
+  --ink: #f3e8e6;
+  --ink-soft: #b39e9b;
+  --ink-faint: #756461;
+  --line: rgba(245, 232, 230, 0.08);
+  --line-strong: rgba(245, 232, 230, 0.18);
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-2: rgba(255, 255, 255, 0.07);
+  --blue: hsl(var(--hue), 90%, 52%);
+  --blue-deep: hsl(var(--hue), 80%, 35%);
+  --blue-soft: hsl(var(--hue), 50%, 22%);
   --serif: "Instrument Serif", "Times New Roman", serif;
   --sans: "Inter", -apple-system, system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, monospace;
@@ -41,15 +41,15 @@ body {
 .bg-grid {
   position: absolute; inset: 0;
   background-image:
-    linear-gradient(to right, rgba(12,31,20,0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(12,31,20,0.05) 1px, transparent 1px);
+    linear-gradient(to right, rgba(245,232,230,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(245,232,230,0.04) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
 }
 .bg-glow { position: absolute; inset: 0; }
 .bg-vignette {
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse 100% 80% at 50% 50%, transparent 50%, rgba(12,31,20,0.06) 100%);
+  background: radial-gradient(ellipse 110% 90% at 50% 55%, transparent 35%, rgba(0,0,0,0.7) 100%);
 }
 
 /* === Nav === */
@@ -96,7 +96,7 @@ body {
   transition: all .2s;
 }
 .nav-link:hover { color: var(--ink); background: var(--surface); }
-.nav-link.active { color: hsl(var(--hue),70%,32%); background: hsla(var(--hue),100%,55%,0.08); }
+.nav-link.active { color: hsl(var(--hue),85%,65%); background: hsla(var(--hue),100%,55%,0.08); }
 
 /* === Stage === */
 .stage {
@@ -207,7 +207,7 @@ body {
   font-family: var(--serif);
   font-size: 16px;
   line-height: 1.45;
-  color: hsl(var(--hue),70%,30%);
+  color: hsl(var(--hue),85%,70%);
 }
 .msg-orb .msg-who { color: hsl(var(--hue),100%,45%); }
 
@@ -249,7 +249,7 @@ body {
 }
 .chip:hover {
   border-color: hsla(var(--hue),100%,55%,0.4);
-  color: hsl(var(--hue),70%,30%);
+  color: hsl(var(--hue),85%,70%);
   background: hsla(var(--hue),100%,55%,0.05);
 }
 
@@ -441,7 +441,7 @@ body {
 }
 .ask-chip:hover {
   border-color: hsla(var(--hue),100%,55%,0.4);
-  color: hsl(var(--hue),70%,30%);
+  color: hsl(var(--hue),85%,70%);
   background: hsla(var(--hue),100%,55%,0.05);
 }
 
@@ -462,14 +462,14 @@ body {
   text-transform: uppercase;
   color: var(--ink-faint);
 }
-.ask-msg-orb .ask-who { color: hsl(var(--hue),70%,32%); }
+.ask-msg-orb .ask-who { color: hsl(var(--hue),85%,65%); }
 .ask-text {
   font-family: var(--sans);
   font-size: 13.5px;
   line-height: 1.5;
   color: var(--ink);
 }
-.ask-msg-orb .ask-text { color: hsl(var(--hue),70%,30%); }
+.ask-msg-orb .ask-text { color: hsl(var(--hue),85%,70%); }
 
 .ask-orb-input {
   display: flex;
@@ -572,7 +572,7 @@ body {
   border-radius: 999px;
   background: var(--surface);
   border: 1px solid var(--line);
-  color: hsl(var(--hue),70%,30%);
+  color: hsl(var(--hue),85%,70%);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -599,7 +599,7 @@ body {
 .welcome-title .hl,
 .question-title .hl,
 .result-title .hl {
-  color: hsl(var(--hue), 75%, 28%);
+  color: hsl(var(--hue), 100%, 65%);
 }
 .welcome-lede {
   font-family: var(--sans);
@@ -804,16 +804,16 @@ body {
   margin-left: auto;
 }
 .verdict-good {
-  background: hsla(165, 80%, 45%, 0.14);
-  color: hsl(165, 80%, 28%);
+  background: hsla(140, 60%, 50%, 0.16);
+  color: hsl(140, 60%, 72%);
 }
 .verdict-neutral {
-  background: hsla(35, 90%, 50%, 0.14);
-  color: hsl(28, 85%, 36%);
+  background: hsla(var(--hue),90%,55%,0.16);
+  color: hsl(var(--hue),85%,72%);
 }
 .verdict-switch {
-  background: hsla(5, 80%, 50%, 0.12);
-  color: hsl(5, 75%, 38%);
+  background: hsla(38, 90%, 55%, 0.18);
+  color: hsl(38, 80%, 72%);
 }
 .current-summary {
   font-family: var(--sans);
@@ -890,7 +890,7 @@ body {
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: hsl(var(--hue),70%,32%);
+  color: hsl(var(--hue),85%,65%);
   text-decoration: none;
   margin-top: -2px;
   align-self: flex-start;
@@ -899,7 +899,7 @@ body {
   width: 100%;
   transition: color .15s;
 }
-.rec-link:hover { color: hsl(var(--hue),70%,30%); }
+.rec-link:hover { color: hsl(var(--hue),85%,70%); }
 
 .btn-restart {
   align-self: flex-start;

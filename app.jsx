@@ -41,7 +41,7 @@ const TOTAL_STEPS = 3;
 function App() {
   const [tweaks, setTweak] = useTweaks(
     /*EDITMODE-BEGIN*/ {
-      "hue": 145,
+      "hue": 8,
       "orbSize": 280,
       "particleIntensity": 1,
       "bgIntensity": 1
@@ -535,8 +535,8 @@ function BackgroundField({ hue, intensity }) {
   return (
     <div className="bg" aria-hidden style={{ opacity: intensity }}>
       <div className="bg-grid" />
-      <div className="bg-glow" style={{ background: `radial-gradient(60% 50% at 25% 50%, hsla(${hue},100%,55%,0.18), transparent 70%)` }} />
-      <div className="bg-glow bg-glow-2" style={{ background: `radial-gradient(40% 30% at 80% 20%, hsla(${hue},100%,60%,0.10), transparent 70%)` }} />
+      <div className="bg-glow" style={{ background: `radial-gradient(80% 60% at 50% 60%, hsla(${hue},85%,40%,0.30), transparent 75%)` }} />
+      <div className="bg-glow bg-glow-2" style={{ background: `radial-gradient(50% 40% at 75% 25%, hsla(${hue},90%,45%,0.14), transparent 70%)` }} />
       <div className="bg-vignette" />
     </div>
   );
