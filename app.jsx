@@ -290,9 +290,11 @@ function WelcomeStep({ onStart }) {
       </p>
 
       <div className="welcome-row">
-        <button className="btn btn-primary btn-lg" onClick={onStart}>
-          Start analysis →
-        </button>
+        <div className="welcome-cta">
+          <button className="btn btn-primary" onClick={onStart}>
+            Start analysis →
+          </button>
+        </div>
 
         <div className="ask-orb">
           <div className="ask-orb-head">
@@ -403,6 +405,46 @@ function verdictMeta(v) {
   return { label: v || "—", tone: "neutral" };
 }
 
+// Curated reference links — Wikipedia where it exists, otherwise PubMed search.
+// Source: peer-reviewed encyclopaedic overviews so users can verify mechanism + research.
+const PEPTIDE_REFERENCES = {
+  "bpc-157": { url: "https://en.wikipedia.org/wiki/BPC_157", source: "Wikipedia" },
+  "tb-500": { url: "https://en.wikipedia.org/wiki/Thymosin_beta-4", source: "Wikipedia (Thymosin β-4)" },
+  "thymosin beta-4": { url: "https://en.wikipedia.org/wiki/Thymosin_beta-4", source: "Wikipedia" },
+  "thymosin β-4": { url: "https://en.wikipedia.org/wiki/Thymosin_beta-4", source: "Wikipedia" },
+  "semaglutide": { url: "https://en.wikipedia.org/wiki/Semaglutide", source: "Wikipedia" },
+  "tirzepatide": { url: "https://en.wikipedia.org/wiki/Tirzepatide", source: "Wikipedia" },
+  "cjc-1295": { url: "https://en.wikipedia.org/wiki/CJC-1295", source: "Wikipedia" },
+  "ipamorelin": { url: "https://en.wikipedia.org/wiki/Ipamorelin", source: "Wikipedia" },
+  "tesamorelin": { url: "https://en.wikipedia.org/wiki/Tesamorelin", source: "Wikipedia" },
+  "ghk-cu": { url: "https://en.wikipedia.org/wiki/GHK-Cu", source: "Wikipedia" },
+  "epitalon": { url: "https://en.wikipedia.org/wiki/Epitalon", source: "Wikipedia" },
+  "mots-c": { url: "https://en.wikipedia.org/wiki/MOTS-c", source: "Wikipedia" },
+  "selank": { url: "https://en.wikipedia.org/wiki/Selank", source: "Wikipedia" },
+  "semax": { url: "https://en.wikipedia.org/wiki/Semax", source: "Wikipedia" },
+  "dsip": { url: "https://en.wikipedia.org/wiki/Delta_sleep-inducing_peptide", source: "Wikipedia" },
+  "thymosin alpha-1": { url: "https://en.wikipedia.org/wiki/Thymalfasin", source: "Wikipedia (Thymalfasin)" },
+  "thymosin α-1": { url: "https://en.wikipedia.org/wiki/Thymalfasin", source: "Wikipedia" },
+  "thymalfasin": { url: "https://en.wikipedia.org/wiki/Thymalfasin", source: "Wikipedia" },
+  "pt-141": { url: "https://en.wikipedia.org/wiki/Bremelanotide", source: "Wikipedia (Bremelanotide)" },
+  "bremelanotide": { url: "https://en.wikipedia.org/wiki/Bremelanotide", source: "Wikipedia" },
+  "5-amino-1mq": { url: "https://pubmed.ncbi.nlm.nih.gov/?term=5-amino-1mq", source: "PubMed" },
+};
+
+function peptideReference(name) {
+  if (!name) return null;
+  const lower = String(name).toLowerCase().trim();
+  if (PEPTIDE_REFERENCES[lower]) return PEPTIDE_REFERENCES[lower];
+  // Stacks like "CJC-1295 + Ipamorelin" — link to the first peptide
+  const first = lower.split(/[+,/]/)[0].trim();
+  if (PEPTIDE_REFERENCES[first]) return PEPTIDE_REFERENCES[first];
+  // Fallback: PubMed search
+  return {
+    url: `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(name)}`,
+    source: "PubMed",
+  };
+}
+
 function ResultStep({ result, answers, onRestart }) {
   let parsed = null;
   try {
@@ -443,33 +485,41 @@ function ResultStep({ result, answers, onRestart }) {
       </div>
 
       <div className="rec-grid">
-        {parsed.recommendations.slice(0, 2).map((rec, i) => (
-          <div key={i} className="rec-card">
-            <div className="rec-num">RECOMMENDED 0{i + 1}</div>
-            <div className="rec-name">{rec.name}</div>
-            <div className="rec-stats">
-              {rec.dose && (
-                <div className="rec-stat">
-                  <div className="rec-stat-label">Dose</div>
-                  <div className="rec-stat-value">{rec.dose}</div>
-                </div>
-              )}
-              {rec.schedule && (
-                <div className="rec-stat">
-                  <div className="rec-stat-label">Schedule</div>
-                  <div className="rec-stat-value">{rec.schedule}</div>
-                </div>
-              )}
-              {rec.duration && (
-                <div className="rec-stat">
-                  <div className="rec-stat-label">Cycle</div>
-                  <div className="rec-stat-value">{rec.duration}</div>
-                </div>
+        {parsed.recommendations.slice(0, 2).map((rec, i) => {
+          const ref = peptideReference(rec.name);
+          return (
+            <div key={i} className="rec-card">
+              <div className="rec-num">RECOMMENDED 0{i + 1}</div>
+              <div className="rec-name">{rec.name}</div>
+              <div className="rec-stats">
+                {rec.dose && (
+                  <div className="rec-stat">
+                    <div className="rec-stat-label">Dose</div>
+                    <div className="rec-stat-value">{rec.dose}</div>
+                  </div>
+                )}
+                {rec.schedule && (
+                  <div className="rec-stat">
+                    <div className="rec-stat-label">Schedule</div>
+                    <div className="rec-stat-value">{rec.schedule}</div>
+                  </div>
+                )}
+                {rec.duration && (
+                  <div className="rec-stat">
+                    <div className="rec-stat-label">Cycle</div>
+                    <div className="rec-stat-value">{rec.duration}</div>
+                  </div>
+                )}
+              </div>
+              {rec.why && <div className="rec-why">{rec.why}</div>}
+              {ref && (
+                <a className="rec-link" href={ref.url} target="_blank" rel="noopener noreferrer">
+                  Read more on {ref.source} →
+                </a>
               )}
             </div>
-            {rec.why && <div className="rec-why">{rec.why}</div>}
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <button className="btn btn-primary btn-restart" onClick={onRestart}>

@@ -358,9 +358,15 @@ body {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 18px;
-  align-items: stretch;
+  align-items: start;
   width: 100%;
   margin-top: 8px;
+}
+.welcome-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 6px;
 }
 
 /* Ask the orb mini-chat */
@@ -720,11 +726,6 @@ body {
   transform: translateY(-1px);
 }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.btn-lg {
-  padding: 14px 28px;
-  font-size: 15px;
-  margin-top: 6px;
-}
 
 /* Result screen */
 .result { display: flex; flex-direction: column; gap: 18px; }
@@ -859,6 +860,21 @@ body {
   line-height: 1.55;
   color: var(--ink-soft);
 }
+.rec-link {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: hsl(var(--hue),100%,42%);
+  text-decoration: none;
+  margin-top: -2px;
+  align-self: flex-start;
+  padding: 6px 0 0;
+  border-top: 1px solid var(--line);
+  width: 100%;
+  transition: color .15s;
+}
+.rec-link:hover { color: hsl(var(--hue),100%,28%); }
 
 .btn-restart {
   align-self: flex-start;
