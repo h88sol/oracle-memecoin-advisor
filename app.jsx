@@ -271,25 +271,88 @@ function QuestionStep({ stepNum, totalSteps, title, subtitle, options, selected,
   );
 }
 
+function verdictMeta(v) {
+  if (v === "good") return { label: "Good fit", tone: "good" };
+  if (v === "neutral") return { label: "Neutral fit", tone: "neutral" };
+  if (v === "switch") return { label: "Consider switching", tone: "switch" };
+  if (v === "starting") return { label: "Starting fresh", tone: "neutral" };
+  return { label: v || "—", tone: "neutral" };
+}
+
 function ResultStep({ result, answers, onRestart }) {
+  let parsed = null;
+  try {
+    parsed = typeof result === "string" ? JSON.parse(result) : result;
+  } catch {
+    parsed = null;
+  }
+
+  if (!parsed || !parsed.recommendations) {
+    return (
+      <div className="result">
+        <div className="result-tag">// YOUR ANALYSIS</div>
+        <h2 className="result-title">
+          Based on your <span className="hl">{answers.bloodType}</span> blood type
+        </h2>
+        <div className="result-body">{String(result || "No analysis returned. Try again.")}</div>
+        <button className="btn btn-primary" onClick={onRestart}>Run another analysis</button>
+      </div>
+    );
+  }
+
+  const v = verdictMeta(parsed.current?.verdict);
+
   return (
     <div className="result">
       <div className="result-tag">// YOUR ANALYSIS</div>
       <h2 className="result-title">
         Based on your <span className="hl">{answers.bloodType}</span> blood type
       </h2>
-      <div className="result-summary">
-        <div className="result-chip"><strong>Goal:</strong> {answers.goal}</div>
-        <div className="result-chip">
-          <strong>Currently:</strong> {answers.peptide === "none" ? "Not on any peptide" : answers.peptide}
+
+      <div className="current-card">
+        <div className="current-meta">
+          <span className="current-label">Currently</span>
+          <span className="current-name">{parsed.current?.name || answers.peptide}</span>
+          <span className={`verdict-pill verdict-${v.tone}`}>{v.label}</span>
         </div>
+        {parsed.current?.summary && <p className="current-summary">{parsed.current.summary}</p>}
       </div>
-      <div className="result-body">{result}</div>
-      <button className="btn btn-primary" onClick={onRestart}>
+
+      <div className="rec-grid">
+        {parsed.recommendations.slice(0, 2).map((rec, i) => (
+          <div key={i} className="rec-card">
+            <div className="rec-num">RECOMMENDED 0{i + 1}</div>
+            <div className="rec-name">{rec.name}</div>
+            <div className="rec-stats">
+              {rec.dose && (
+                <div className="rec-stat">
+                  <div className="rec-stat-label">Dose</div>
+                  <div className="rec-stat-value">{rec.dose}</div>
+                </div>
+              )}
+              {rec.schedule && (
+                <div className="rec-stat">
+                  <div className="rec-stat-label">Schedule</div>
+                  <div className="rec-stat-value">{rec.schedule}</div>
+                </div>
+              )}
+              {rec.duration && (
+                <div className="rec-stat">
+                  <div className="rec-stat-label">Cycle</div>
+                  <div className="rec-stat-value">{rec.duration}</div>
+                </div>
+              )}
+            </div>
+            {rec.why && <div className="rec-why">{rec.why}</div>}
+          </div>
+        ))}
+      </div>
+
+      <button className="btn btn-primary btn-restart" onClick={onRestart}>
         Run another analysis
       </button>
       <p className="result-disclaimer">
-        Educational only — not medical advice. Always consult a qualified physician before starting any peptide.
+        {parsed.note || "Educational only — not medical advice. Always consult a qualified physician before starting any peptide."}
       </p>
     </div>
   );

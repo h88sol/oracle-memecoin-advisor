@@ -32,11 +32,11 @@ module.exports = async function handler(req, res) {
   }
 
   const baseSystem = systemPrompt ||
-    "You are OCEAN, an AI peptide advisor that personalizes recommendations to a user's blood type, current peptide use, and goals. You are knowledgeable, practical, and educational — never giving medical advice.";
+    "You are OCEAN, an AI peptide advisor. Given a user's blood type, current peptide, and goal, you return a structured JSON analysis.";
   const expertise =
-    " You know peptide pharmacology cold: BPC-157 (gut, tendon, soft-tissue healing), TB-500 / Thymosin-Beta-4 (soft tissue, muscle repair), Semaglutide and Tirzepatide (GLP-1/dual incretin weight loss), CJC-1295 + Ipamorelin (GH releasing combo), Tesamorelin (visceral fat), GHK-Cu (skin/hair/healing), Epitalon (telomere, longevity), MOTS-c (mitochondrial, metabolism), Selank/Semax (cognitive/anxiolytic), DSIP (sleep), Thymosin Alpha-1 (immune), PT-141 (libido), 5-Amino-1MQ (NAD/metabolism). Know typical dosing ranges, cycle lengths, common stacks, and side-effect profiles. Blood-type considerations in peptide therapy are an emerging area — touch on plausible mechanisms (e.g., O-types tend to have higher IGF-1 baselines so GHRH analogs may be less needed; A-types can be more sensitive to inflammation, making BPC-157 favorable; B-types often respond well to metabolic peptides; AB is mixed) but be honest that this is preliminary, not established clinical practice.";
+    " You know peptide pharmacology: BPC-157 (gut, tendon, healing), TB-500 / Thymosin-Beta-4 (soft tissue, muscle repair), Semaglutide and Tirzepatide (GLP-1 weight loss), CJC-1295 + Ipamorelin (GH releasing combo), Tesamorelin (visceral fat), GHK-Cu (skin/hair/healing), Epitalon (telomere, longevity), MOTS-c (mitochondrial, metabolism), Selank/Semax (cognitive), DSIP (sleep), Thymosin Alpha-1 (immune), PT-141 (libido), 5-Amino-1MQ (NAD). Know typical dosing, cycle lengths, common stacks. Blood-type considerations: O-types higher baseline IGF-1 (GHRH analogs less critical), A-types more inflammation-sensitive (BPC-157 / GHK-Cu favorable), B-types respond well to metabolic peptides, AB mixed. This is emerging research, not clinical doctrine.";
   const format =
-    " FORMAT: Plain text only. Structure your response in 3 short paragraphs separated by blank lines:\n\n1. CURRENT PEPTIDE: brief verdict (good fit / neutral / consider switching) and why, given their blood type and goal. If they said 'no peptides', skip the verdict and instead give a short 'where to start' framing.\n\n2. RECOMMENDED #1: name a peptide that fits their goal and blood-type profile. Include typical dose range and a one-sentence reason why it suits them.\n\n3. RECOMMENDED #2: a second option with the same format. End with a single short note that this is educational, blood-type-based peptide guidance is emerging research, and they should consult a qualified physician.\n\nNo markdown, no bullet points, no asterisks, no emojis, no headers like 'Current peptide:' — write it as flowing paragraphs. Under 200 words total.";
+    ' FORMAT: Return ONLY a JSON object with this exact shape:\n\n{\n  "current": {\n    "verdict": "good" | "neutral" | "switch" | "starting",\n    "name": "<their current peptide name, or \\"No peptide\\" if starting fresh>",\n    "summary": "<1-2 sentences: how their current peptide fits their blood type and goal. If starting fresh, frame as where to begin.>"\n  },\n  "recommendations": [\n    {\n      "name": "<peptide name, e.g. TB-500>",\n      "dose": "<typical dose, e.g. \\"5-10 mg per week\\">",\n      "schedule": "<when/how, e.g. \\"Subcutaneous, twice weekly\\">",\n      "duration": "<cycle length, e.g. \\"4-6 weeks on, 2 weeks off\\">",\n      "why": "<1-2 short sentences on why it fits their blood type and goal — under 30 words>"\n    },\n    { "name": "...", "dose": "...", "schedule": "...", "duration": "...", "why": "..." }\n  ],\n  "note": "<one short sentence reminding them this is educational, blood-type-based peptide guidance is emerging research, and to consult a qualified physician>"\n}\n\nUse \'starting\' verdict only if their current peptide is "no peptides — new to peptides". Always two recommendations. No markdown. No prose outside the JSON object. Return the JSON only.';
 
   const groqMessages = [
     { role: "system", content: baseSystem + expertise + format },
@@ -56,8 +56,9 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
         messages: groqMessages,
-        max_tokens: 380,
-        temperature: 0.55,
+        max_tokens: 700,
+        temperature: 0.5,
+        response_format: { type: "json_object" },
       }),
     });
 

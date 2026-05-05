@@ -532,44 +532,144 @@ body {
 }
 
 /* Result screen */
-.result { display: flex; flex-direction: column; gap: 16px; }
+.result { display: flex; flex-direction: column; gap: 18px; }
 .result-title {
   font-family: var(--sans);
   font-size: clamp(28px, 3.6vw, 44px);
   font-weight: 400;
   line-height: 1.1;
   letter-spacing: -0.02em;
-  margin: 6px 0 0;
+  margin: 6px 0 4px;
 }
-.result-summary {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.result-chip {
-  font-family: var(--sans);
-  font-size: 13px;
-  background: rgba(255,255,255,0.7);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 7px 14px;
-  color: var(--ink-soft);
-}
-.result-chip strong { color: var(--ink); font-weight: 500; }
-.result-body {
-  font-family: var(--sans);
-  font-size: 15px;
-  line-height: 1.65;
-  color: var(--ink);
+
+/* Current peptide card */
+.current-card {
   background: rgba(255,255,255,0.7);
   backdrop-filter: blur(8px);
   border: 1px solid var(--line);
   border-radius: 14px;
-  padding: 22px 24px;
-  white-space: pre-wrap;
-  text-wrap: pretty;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
+.current-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.current-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.current-name {
+  font-family: var(--sans);
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+}
+.verdict-pill {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-left: auto;
+}
+.verdict-good {
+  background: rgba(40, 180, 90, 0.10);
+  color: hsl(140, 60%, 30%);
+}
+.verdict-neutral {
+  background: hsla(var(--hue),100%,55%,0.10);
+  color: hsl(var(--hue),100%,38%);
+}
+.verdict-switch {
+  background: rgba(220, 90, 60, 0.10);
+  color: hsl(10, 65%, 42%);
+}
+.current-summary {
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* Recommendation cards */
+.rec-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.rec-card {
+  background: rgba(255,255,255,0.78);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.rec-num {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: hsl(var(--hue),100%,45%);
+}
+.rec-name {
+  font-family: var(--sans);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  margin: -4px 0 2px;
+}
+.rec-stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.rec-stat { display: flex; gap: 12px; align-items: baseline; }
+.rec-stat-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  width: 76px;
+  flex: 0 0 76px;
+}
+.rec-stat-value {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  color: var(--ink);
+  line-height: 1.4;
+}
+.rec-why {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.btn-restart {
+  align-self: flex-start;
+  margin-top: 6px;
+}
+
 .result-disclaimer {
   font-family: var(--mono);
   font-size: 10.5px;
@@ -577,6 +677,7 @@ body {
   color: var(--ink-faint);
   margin: 6px 0 0;
   line-height: 1.5;
+  max-width: 600px;
 }
 
 /* === Mobile === */
@@ -590,4 +691,5 @@ body {
   .quiz-orb { transform: scale(0.7); margin-top: -40px; margin-bottom: -40px; }
   .quiz-footer { padding: 16px 20px 24px; }
   .option-grid.cols-3, .option-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+  .rec-grid { grid-template-columns: 1fr; }
 }
