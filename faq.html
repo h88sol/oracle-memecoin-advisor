@@ -9,47 +9,98 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <style>
-  .docs {
-    max-width: 680px;
+  .faq-section {
+    max-width: 980px;
     margin: 0 auto;
-    padding: 60px 32px 120px;
+    padding: 80px 32px 120px;
     position: relative;
     z-index: 2;
   }
-  .docs h1 {
-    font-family: var(--serif);
-    font-size: clamp(40px, 6vw, 60px);
+  .faq-tag {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: hsl(var(--hue), 100%, 50%);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .faq-heading {
+    font-family: var(--sans);
     font-weight: 400;
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    margin: 0 0 20px;
-    text-wrap: balance;
-  }
-  .docs .lede {
-    font-family: var(--serif);
-    font-size: 20px;
-    line-height: 1.5;
-    color: var(--ink-soft);
-    text-wrap: pretty;
+    font-size: clamp(44px, 7vw, 84px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
     margin: 0 0 56px;
-  }
-  .qa { padding: 18px 0; border-top: 1px solid var(--line); }
-  .qa:last-child { border-bottom: 1px solid var(--line); }
-  .qa-q {
-    font-family: var(--serif);
-    font-size: 19px;
+    text-wrap: balance;
     color: var(--ink);
-    margin: 0 0 6px;
-    line-height: 1.3;
   }
-  .qa-a {
+  .faq-heading .hl {
+    color: hsl(var(--hue), 100%, 50%);
+  }
+
+  .accordion {
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .ac-item {
+    border-bottom: 1px solid var(--line);
+  }
+  .ac-item:last-child { border-bottom: none; }
+  .ac-item summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    font-size: 17px;
+    color: var(--ink);
+    font-weight: 400;
+    transition: background .15s;
+  }
+  .ac-item summary::-webkit-details-marker { display: none; }
+  .ac-item summary:hover { background: rgba(10,19,48,0.02); }
+  .ac-icon {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+    position: relative;
+    color: hsl(var(--hue), 100%, 50%);
+    transition: transform .25s ease;
+  }
+  .ac-icon::before, .ac-icon::after {
+    content: "";
+    position: absolute;
+    background: currentColor;
+    border-radius: 1px;
+    transition: transform .25s ease, opacity .2s ease;
+  }
+  .ac-icon::before {
+    top: 50%; left: 0; right: 0;
+    height: 2px;
+    transform: translateY(-50%);
+  }
+  .ac-icon::after {
+    top: 0; bottom: 0; left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+  }
+  .ac-item[open] .ac-icon { transform: rotate(45deg); }
+
+  .ac-a {
+    padding: 0 28px 22px 28px;
     font-size: 15px;
+    line-height: 1.65;
     color: var(--ink-soft);
-    line-height: 1.6;
-    margin: 0;
+    max-width: 760px;
   }
+
   .warn {
-    margin: 40px 0 0;
+    margin: 48px 0 0;
     padding: 16px 18px;
     border-left: 2px solid hsl(var(--hue),100%,50%);
     background: hsla(var(--hue),100%,55%,0.04);
@@ -90,43 +141,45 @@
     </nav>
   </header>
 
-  <main class="docs">
-    <h1>Frequently asked questions.</h1>
-    <p class="lede">Quick answers about what OCEAN is, what it isn't, and how to use it safely.</p>
+  <main class="faq-section">
+    <div class="faq-tag">// QUESTIONS</div>
+    <h1 class="faq-heading">Things people <span class="hl">actually ask</span>.</h1>
 
-    <div class="qa">
-      <p class="qa-q">Is this financial advice?</p>
-      <p class="qa-a">No. OCEAN gives perspective and education only. It will never tell you to buy or sell a specific coin. Sizing, timing, and risk are yours alone.</p>
-    </div>
+    <div class="accordion">
+      <details class="ac-item">
+        <summary><span>Is this financial advice?</span><span class="ac-icon" aria-hidden="true"></span></summary>
+        <div class="ac-a">No. OCEAN gives perspective and education only. It will never tell you to buy or sell a specific coin. Sizing, timing, and risk are yours alone.</div>
+      </details>
 
-    <div class="qa">
-      <p class="qa-q">Can it predict prices?</p>
-      <p class="qa-a">No, and don't trust anything that claims it can. OCEAN explains mechanics, patterns, and risk — not the future.</p>
-    </div>
+      <details class="ac-item">
+        <summary><span>Can it predict prices?</span><span class="ac-icon" aria-hidden="true"></span></summary>
+        <div class="ac-a">No, and don't trust anything that claims it can. OCEAN explains mechanics, patterns, and risk — not the future.</div>
+      </details>
 
-    <div class="qa">
-      <p class="qa-q">How do I check if a token is a rug?</p>
-      <p class="qa-a">Ask the orb directly. It'll walk you through what to look at — locked liquidity, holder concentration, dev wallets, contract verification, mint authority. Use tools like DexScreener, RugCheck, or GMGN to verify.</p>
-    </div>
+      <details class="ac-item">
+        <summary><span>How do I check if a token is a rug?</span><span class="ac-icon" aria-hidden="true"></span></summary>
+        <div class="ac-a">Ask the orb directly. It'll walk you through what to look at — locked liquidity, holder concentration, dev wallets, contract verification, mint authority. Use tools like DexScreener, RugCheck, or GMGN to verify.</div>
+      </details>
 
-    <div class="qa">
-      <p class="qa-q">What's a memecoin vs a shitcoin?</p>
-      <p class="qa-a">Loosely: memecoins live on culture and narrative; shitcoins are tokens with no purpose, often launched to dump. The line is blurry — ask the orb to break it down.</p>
-    </div>
+      <details class="ac-item">
+        <summary><span>What's a memecoin vs a shitcoin?</span><span class="ac-icon" aria-hidden="true"></span></summary>
+        <div class="ac-a">Loosely: memecoins live on culture and narrative; shitcoins are tokens with no purpose, often launched to dump. The line is blurry — ask the orb to break it down.</div>
+      </details>
 
-    <div class="qa">
-      <p class="qa-q">Does it know about specific coins?</p>
-      <p class="qa-a">It knows general crypto and memecoin mechanics. It doesn't pull live prices or chase tickers — for live data check DexScreener, Birdeye, or GMGN.</p>
-    </div>
+      <details class="ac-item">
+        <summary><span>Does it know about specific coins?</span><span class="ac-icon" aria-hidden="true"></span></summary>
+        <div class="ac-a">It knows general crypto and memecoin mechanics. It doesn't pull live prices or chase tickers — for live data check DexScreener, Birdeye, or GMGN.</div>
+      </details>
 
-    <div class="qa">
-      <p class="qa-q">Is the voice real-time?</p>
-      <p class="qa-a">Yes — speech-in via your browser, speech-out via the orb. Toggle "Speak aloud" in Tweaks if you want a quiet read instead.</p>
-    </div>
+      <details class="ac-item">
+        <summary><span>Is the voice real-time?</span><span class="ac-icon" aria-hidden="true"></span></summary>
+        <div class="ac-a">Yes — speech-in via your browser, speech-out via the orb. Toggle "Speak aloud" in Tweaks if you want a quiet read instead.</div>
+      </details>
 
-    <div class="qa">
-      <p class="qa-q">Why is the orb sometimes wrong?</p>
-      <p class="qa-a">It's an AI. It can be confidently wrong. Treat answers as a starting point, not gospel. Verify anything load-bearing on-chain.</p>
+      <details class="ac-item">
+        <summary><span>Why is the orb sometimes wrong?</span><span class="ac-icon" aria-hidden="true"></span></summary>
+        <div class="ac-a">It's an AI. It can be confidently wrong. Treat answers as a starting point, not gospel. Verify anything load-bearing on-chain.</div>
+      </details>
     </div>
 
     <div class="warn">
