@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>ORACLE — Docs</title>
+<title>ORACLE — FAQ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -33,22 +33,6 @@
     text-wrap: pretty;
     margin: 0 0 56px;
   }
-  .docs h2 {
-    font-family: var(--serif);
-    font-size: 26px;
-    font-weight: 400;
-    letter-spacing: -0.01em;
-    margin: 56px 0 14px;
-    line-height: 1.2;
-  }
-  .docs p {
-    font-size: 16px;
-    line-height: 1.65;
-    color: var(--ink-soft);
-    margin: 0 0 14px;
-    text-wrap: pretty;
-  }
-  .docs strong { color: var(--ink); font-weight: 500; }
   .qa { padding: 18px 0; border-top: 1px solid var(--line); }
   .qa:last-child { border-bottom: 1px solid var(--line); }
   .qa-q {
@@ -72,6 +56,7 @@
     border-radius: 0 8px 8px 0;
   }
   .warn-p { font-size: 14.5px; color: var(--ink); line-height: 1.55; margin: 0; }
+  .warn strong { color: var(--ink); font-weight: 500; }
   .back-link {
     display: inline-block;
     margin-top: 56px;
@@ -100,26 +85,53 @@
     </div>
     <nav class="nav-links">
       <a href="index.html" class="nav-link">Speak</a>
-      <a href="docs.html" class="nav-link active">Docs</a>
-      <a href="faq.html" class="nav-link">FAQ</a>
+      <a href="docs.html" class="nav-link">Docs</a>
+      <a href="faq.html" class="nav-link active">FAQ</a>
     </nav>
   </header>
 
   <main class="docs">
-    <h1>An AI advisor for memecoin traders.</h1>
-    <p class="lede">ORACLE is a voice-first AI agent built to help you navigate memecoins. Ask anything — about a token, a rug pattern, tokenomics, liquidity, on-chain signals — and it answers in plain language.</p>
+    <h1>Frequently asked questions.</h1>
+    <p class="lede">Quick answers about what ORACLE is, what it isn't, and how to use it safely.</p>
 
-    <h2>What it is</h2>
-    <p>A real AI under the hood, tuned to talk fluently about crypto. It's not a price feed and it doesn't shill coins. It's a thinking partner — the friend who actually knows what FDV means, who can explain why a chart looks suspicious, and who'll tell you straight when something smells like a rug.</p>
+    <div class="qa">
+      <p class="qa-q">Is this financial advice?</p>
+      <p class="qa-a">No. ORACLE gives perspective and education only. It will never tell you to buy or sell a specific coin. Sizing, timing, and risk are yours alone.</p>
+    </div>
 
-    <h2>How to use it</h2>
-    <p><strong>Type or speak.</strong> Click the mic to talk, or just type a question and hit Enter. The orb listens, thinks, and answers — out loud and on screen.</p>
-    <p><strong>Three voices.</strong> Open the Tweaks panel to switch between Oracle (calm), Analyst (measured), or Degen (chaotic). Same brain, different vibe.</p>
-    <p><strong>Reset anytime.</strong> Hit Reset in the top nav to clear the conversation and start fresh.</p>
+    <div class="qa">
+      <p class="qa-q">Can it predict prices?</p>
+      <p class="qa-a">No, and don't trust anything that claims it can. ORACLE explains mechanics, patterns, and risk — not the future.</p>
+    </div>
 
-    <p style="margin-top: 48px; font-size: 15px; color: var(--ink-faint);">
-      Have a question? Check the <a href="faq.html" style="color: hsl(var(--hue),100%,40%); text-decoration: none;">FAQ</a>.
-    </p>
+    <div class="qa">
+      <p class="qa-q">How do I check if a token is a rug?</p>
+      <p class="qa-a">Ask the orb directly. It'll walk you through what to look at — locked liquidity, holder concentration, dev wallets, contract verification, mint authority. Use tools like DexScreener, RugCheck, or GMGN to verify.</p>
+    </div>
+
+    <div class="qa">
+      <p class="qa-q">What's a memecoin vs a shitcoin?</p>
+      <p class="qa-a">Loosely: memecoins live on culture and narrative; shitcoins are tokens with no purpose, often launched to dump. The line is blurry — ask the orb to break it down.</p>
+    </div>
+
+    <div class="qa">
+      <p class="qa-q">Does it know about specific coins?</p>
+      <p class="qa-a">It knows general crypto and memecoin mechanics. It doesn't pull live prices or chase tickers — for live data check DexScreener, Birdeye, or GMGN.</p>
+    </div>
+
+    <div class="qa">
+      <p class="qa-q">Is the voice real-time?</p>
+      <p class="qa-a">Yes — speech-in via your browser, speech-out via the orb. Toggle "Speak aloud" in Tweaks if you want a quiet read instead.</p>
+    </div>
+
+    <div class="qa">
+      <p class="qa-q">Why is the orb sometimes wrong?</p>
+      <p class="qa-a">It's an AI. It can be confidently wrong. Treat answers as a starting point, not gospel. Verify anything load-bearing on-chain.</p>
+    </div>
+
+    <div class="warn">
+      <p class="warn-p"><strong>Memecoins are extremely high-risk.</strong> Most go to zero. ORACLE will not tell you what to buy. Do your own research.</p>
+    </div>
 
     <a href="index.html" class="back-link">← Back to the orb</a>
   </main>

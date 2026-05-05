@@ -43,7 +43,7 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [state, setState] = useState("idle");
-  const [statusText, setStatusText] = useState("Ask the orb anything.");
+  const [statusText, setStatusText] = useState("Your AI advisor for memecoins. Ask about pumps, rugs, tokenomics — anything crypto.");
   const [listening, setListening] = useState(false);
   const [voiceSupported, setVoiceSupported] = useState(false);
   const recogRef = useRef(null);
@@ -116,7 +116,7 @@ function App() {
         u.onend = () => {
           speakingRef.current = false;
           setState("idle");
-          setStatusText("Ask the orb anything.");
+          setStatusText("Your AI advisor for memecoins. Ask about pumps, rugs, tokenomics — anything crypto.");
         };
         window.speechSynthesis.speak(u);
       } catch {}
@@ -194,12 +194,13 @@ function App() {
         <div className="brand">
           <div className="brand-dot" />
           <span className="brand-name">ORACLE</span>
+          <span className="brand-sub">ai memecoin advisor</span>
         </div>
         <nav className="nav-links">
           <a href="/" className="nav-link active">Speak</a>
           <a href="/docs.html" className="nav-link">Docs</a>
-          <a href="/docs.html#faq" className="nav-link">FAQ</a>
-          <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); setMessages([]); setStatusText("Ask the orb anything."); }}>
+          <a href="/faq.html" className="nav-link">FAQ</a>
+          <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); setMessages([]); setStatusText("Your AI advisor for memecoins. Ask about pumps, rugs, tokenomics — anything crypto."); }}>
             Reset
           </a>
         </nav>
