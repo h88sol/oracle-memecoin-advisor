@@ -125,6 +125,27 @@ body {
   box-shadow: 0 0 16px hsla(140, 70%, 45%, 0.35);
 }
 
+.x-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  text-decoration: none;
+  transition: all .15s;
+  margin-left: 6px;
+}
+.x-btn:hover {
+  background: var(--surface-2);
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+.x-btn svg { display: block; }
+
 /* === Stage === */
 .stage {
   display: flex; flex-direction: column; align-items: center;
