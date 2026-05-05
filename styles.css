@@ -1,6 +1,6 @@
 :root {
   --hue: 145;
-  --bg: #fafdfb;
+  --bg: #f0f5f1;
   --ink: #0c1f14;
   --ink-soft: #4f6356;
   --ink-faint: #8a9a8e;
@@ -599,7 +599,7 @@ body {
 .welcome-title .hl,
 .question-title .hl,
 .result-title .hl {
-  color: hsl(var(--hue),100%,50%);
+  color: hsl(var(--hue), 75%, 28%);
 }
 .welcome-lede {
   font-family: var(--sans);
