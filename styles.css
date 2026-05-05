@@ -599,7 +599,7 @@ body {
 .welcome-title .hl,
 .question-title .hl,
 .result-title .hl {
-  color: hsl(var(--hue), 100%, 65%);
+  color: hsl(var(--hue), 85%, 50%);
 }
 .welcome-lede {
   font-family: var(--sans);
