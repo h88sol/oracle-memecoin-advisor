@@ -281,7 +281,7 @@ function WelcomeStep({ onStart }) {
       </h1>
       <p className="welcome-lede">
         Three quick questions — your blood type, your current peptide (if any), and your goal —
-        and the orb tells you whether what you're on fits, plus what to consider next.
+        and peptype tells you whether what you're on fits, plus what to consider next.
       </p>
 
       <div className="welcome-row">
@@ -297,7 +297,7 @@ function WelcomeStep({ onStart }) {
         <div className="ask-orb">
           <div className="ask-orb-head">
             <span className="ask-orb-dot" />
-            <span className="ask-orb-title">Ask the orb</span>
+            <span className="ask-orb-title">Ask peptype</span>
           </div>
 
           {chatMessages.length === 0 && !chatLoading && (
