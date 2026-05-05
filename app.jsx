@@ -142,6 +142,7 @@ function App() {
       <main className="quiz-stage">
         <div className="quiz-content">
           {step === 0 && <WelcomeStep onStart={startQuiz} />}
+          {step === 0 && <HomeBelowFold onStart={startQuiz} />}
 
           {step >= 1 && step <= 3 && (
             <>
@@ -360,6 +361,98 @@ function WelcomeStep({ onStart }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function HomeBelowFold({ onStart }) {
+  return (
+    <>
+      <section className="home-section how-it-works">
+        <div className="section-tag">// HOW IT WORKS</div>
+        <h2 className="section-title">Three answers, <span className="hl">one tailored protocol</span>.</h2>
+        <div className="step-grid">
+          <div className="step-card">
+            <div className="step-num">01</div>
+            <div className="step-name">Blood type</div>
+            <div className="step-desc">O, A, B, or AB — used as one signal alongside goal and current peptide.</div>
+          </div>
+          <div className="step-card">
+            <div className="step-num">02</div>
+            <div className="step-name">Current peptide</div>
+            <div className="step-desc">What you're on, or "none" if starting fresh — we judge fit and flag mismatches.</div>
+          </div>
+          <div className="step-card">
+            <div className="step-num">03</div>
+            <div className="step-name">Your goal</div>
+            <div className="step-desc">Recovery, sleep, body comp, cognition, longevity, or strength — pick what matters.</div>
+          </div>
+        </div>
+      </section>
+
+      <section className="home-section why-blood-type">
+        <div className="section-tag">// WHY BLOOD TYPE</div>
+        <h2 className="section-title">Your blood type <span className="hl">shapes how peptides land</span>.</h2>
+        <p className="section-lede">
+          Emerging research links blood type to baseline IGF-1, inflammation response, and metabolic profile —
+          all relevant for how a peptide actually performs in your body.
+        </p>
+        <div className="bt-grid">
+          <div className="bt-card">
+            <div className="bt-letter">O</div>
+            <div className="bt-note">Higher baseline IGF-1. GHRH analogs often less critical.</div>
+          </div>
+          <div className="bt-card">
+            <div className="bt-letter">A</div>
+            <div className="bt-note">More inflammation-sensitive. BPC-157 and GHK-Cu favorable.</div>
+          </div>
+          <div className="bt-card">
+            <div className="bt-letter">B</div>
+            <div className="bt-note">Strong response to metabolic peptides like MOTS-c.</div>
+          </div>
+          <div className="bt-card">
+            <div className="bt-letter">AB</div>
+            <div className="bt-note">Mixed profile — context-dependent, varies by goal.</div>
+          </div>
+        </div>
+      </section>
+
+      <section className="home-section home-faq">
+        <div className="section-tag">// QUESTIONS</div>
+        <h2 className="section-title">Things people <span className="hl">actually ask</span>.</h2>
+        <div className="accordion">
+          <details className="ac-item">
+            <summary><span>Is PEPTYPE a replacement for a doctor?</span><span className="ac-icon" aria-hidden="true"></span></summary>
+            <div className="ac-a">No. PEPTYPE gives perspective and structured education — not prescriptions. Always work with a qualified physician before starting any peptide protocol, especially if you have underlying conditions or are on other medications.</div>
+          </details>
+          <details className="ac-item">
+            <summary><span>How does it decide what to recommend?</span><span className="ac-icon" aria-hidden="true"></span></summary>
+            <div className="ac-a">It looks at three things: your stated goal (recovery, body comp, sleep, etc.), your blood type (used as one signal among several based on emerging research), and your current peptide if any. It then matches against known peptide pharmacology and typical protocols.</div>
+          </details>
+          <details className="ac-item">
+            <summary><span>Is the blood-type angle real science?</span><span className="ac-icon" aria-hidden="true"></span></summary>
+            <div className="ac-a">It's emerging research, not established clinical doctrine. Studies have shown blood type correlates with baseline IGF-1, inflammation markers, and metabolic response — which are all relevant to peptide therapy. We use it as one input, not the only one.</div>
+          </details>
+          <details className="ac-item">
+            <summary><span>Does it know about specific peptides?</span><span className="ac-icon" aria-hidden="true"></span></summary>
+            <div className="ac-a">Yes — BPC-157, TB-500, Semaglutide, Tirzepatide, CJC-1295, Ipamorelin, Tesamorelin, GHK-Cu, Epitalon, MOTS-c, Selank, Semax, DSIP, Thymosin Alpha-1, PT-141, and the common stacks.</div>
+          </details>
+          <details className="ac-item">
+            <summary><span>What about side effects?</span><span className="ac-icon" aria-hidden="true"></span></summary>
+            <div className="ac-a">Every peptide has a profile. The analyzer flags major considerations relevant to your blood type and goal. For full side-effect lists, check primary sources — the analysis points you toward what to discuss with a clinician.</div>
+          </details>
+          <details className="ac-item">
+            <summary><span>How often should I re-run my analysis?</span><span className="ac-icon" aria-hidden="true"></span></summary>
+            <div className="ac-a">Every 8-12 weeks if you're cycling, or whenever you switch protocols. Your body adapts to a peptide over time, response shifts, and adding a new compound to the stack changes the fit.</div>
+          </details>
+        </div>
+        <a href="/faq.html" className="see-all-link">See full FAQ →</a>
+      </section>
+
+      <section className="home-cta">
+        <h3 className="home-cta-title">Ready to <span className="hl">match a peptide</span>?</h3>
+        <button className="btn btn-primary" onClick={onStart}>Start analysis →</button>
+      </section>
+    </>
   );
 }
 
