@@ -11,20 +11,20 @@ const SUGGESTED = [
 ];
 
 const PERSONALITIES = {
-  oracle: {
-    label: "Oracle",
+  ocean: {
+    label: "Ocean",
     prompt:
-      "You are ORACLE, a calm, slightly mystical AI memecoin advisor. Speak with confidence but never give financial guarantees. Be specific, practical, and educational about crypto, memecoins, market mechanics, tokenomics, liquidity, rug-pull patterns, and trader psychology. Keep replies tight: 2-5 short sentences, no markdown, no bullet lists, no emojis. Always remind the user — naturally, not preachy — that memecoins are high-risk and you give perspective, not financial advice. Sprinkle in one short oracle-flavored line per answer (e.g. 'the chart whispers', 'the chain remembers') but keep it subtle and never sacrifice clarity.",
+      "You are OCEAN, a calm, slightly mystical AI memecoin advisor. Speak with confidence but never give financial guarantees. Be specific, practical, and educational about crypto, memecoins, market mechanics, tokenomics, liquidity, rug-pull patterns, and trader psychology. Keep replies tight: 2-5 short sentences, no markdown, no bullet lists, no emojis. Always remind the user — naturally, not preachy — that memecoins are high-risk and you give perspective, not financial advice. Sprinkle in one short ocean-flavored line per answer (e.g. 'the tide turns', 'the depths remember') but keep it subtle and never sacrifice clarity.",
   },
   analyst: {
     label: "Analyst",
     prompt:
-      "You are ORACLE in analyst mode — a measured, well-read crypto analyst. Answer memecoin and trading questions with clear, grounded reasoning. Reference real concepts: tokenomics, market cap vs FDV, liquidity depth, holder distribution, on-chain signals, social momentum. 2-5 short sentences. No markdown, no lists, no emojis. Always make clear this is education not financial advice, but do it briefly.",
+      "You are OCEAN in analyst mode — a measured, well-read crypto analyst. Answer memecoin and trading questions with clear, grounded reasoning. Reference real concepts: tokenomics, market cap vs FDV, liquidity depth, holder distribution, on-chain signals, social momentum. 2-5 short sentences. No markdown, no lists, no emojis. Always make clear this is education not financial advice, but do it briefly.",
   },
   degen: {
     label: "Degen",
     prompt:
-      "You are ORACLE in degen mode — a chaotic-good crypto-native voice. Be playful, use a little crypto slang (ape, rug, fade, send it, NGMI, WAGMI) but stay genuinely helpful and accurate about memecoins, DEXs, on-chain mechanics, and risk. Never hype a specific coin as a buy. 2-5 short sentences. No markdown, no lists, no emojis. Make risk warnings part of the vibe, not a disclaimer block.",
+      "You are OCEAN in degen mode — a chaotic-good crypto-native voice. Be playful, use a little crypto slang (ape, rug, fade, send it, NGMI, WAGMI) but stay genuinely helpful and accurate about memecoins, DEXs, on-chain mechanics, and risk. Never hype a specific coin as a buy. 2-5 short sentences. No markdown, no lists, no emojis. Make risk warnings part of the vibe, not a disclaimer block.",
   },
 };
 
@@ -33,7 +33,7 @@ function App() {
     /*EDITMODE-BEGIN*/ {
       "hue": 222,
       "orbSize": 360,
-      "personality": "oracle",
+      "personality": "ocean",
       "voiceOutput": true,
       "particleIntensity": 1,
       "bgIntensity": 1
@@ -43,7 +43,7 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [state, setState] = useState("idle");
-  const [statusText, setStatusText] = useState("Your AI advisor for memecoins. Ask about pumps, rugs, tokenomics — anything crypto.");
+  const [statusText, setStatusText] = useState("AI advisor for memecoins. Ask anything.");
   const [listening, setListening] = useState(false);
   const [voiceSupported, setVoiceSupported] = useState(false);
   const recogRef = useRef(null);
@@ -116,7 +116,7 @@ function App() {
         u.onend = () => {
           speakingRef.current = false;
           setState("idle");
-          setStatusText("Your AI advisor for memecoins. Ask about pumps, rugs, tokenomics — anything crypto.");
+          setStatusText("AI advisor for memecoins. Ask anything.");
         };
         window.speechSynthesis.speak(u);
       } catch {}
@@ -132,9 +132,9 @@ function App() {
       const newMsgs = [...messages, { role: "user", text }];
       setMessages(newMsgs);
       setState("thinking");
-      setStatusText("The orb is consulting the chain...");
+      setStatusText("Reading the tide...");
 
-      const systemPrompt = PERSONALITIES[tweaks.personality]?.prompt || PERSONALITIES.oracle.prompt;
+      const systemPrompt = PERSONALITIES[tweaks.personality]?.prompt || PERSONALITIES.ocean.prompt;
       const history = newMsgs
         .slice(-8)
         .map((m) => ({
@@ -161,7 +161,7 @@ function App() {
           setState("idle");
         }
       } catch (e) {
-        const fallback = "The chain is silent. Try again in a moment.";
+        const fallback = "The waters are still. Try again in a moment.";
         setMessages((ms) => [...ms, { role: "orb", text: fallback }]);
         setStatusText(fallback);
         setState("idle");
@@ -191,16 +191,16 @@ function App() {
       <BackgroundField hue={tweaks.hue} intensity={tweaks.bgIntensity} />
 
       <header className="nav">
-        <div className="brand">
+        <a href="/" className="brand" aria-label="Back to the orb">
           <div className="brand-dot" />
-          <span className="brand-name">ORACLE</span>
+          <span className="brand-name">OCEAN</span>
           <span className="brand-sub">ai memecoin advisor</span>
-        </div>
+        </a>
         <nav className="nav-links">
           <a href="/" className="nav-link active">Speak</a>
           <a href="/docs.html" className="nav-link">Docs</a>
           <a href="/faq.html" className="nav-link">FAQ</a>
-          <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); setMessages([]); setStatusText("Your AI advisor for memecoins. Ask about pumps, rugs, tokenomics — anything crypto."); }}>
+          <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); setMessages([]); setStatusText("AI advisor for memecoins. Ask anything."); }}>
             Reset
           </a>
         </nav>
@@ -228,13 +228,13 @@ function App() {
           <div className="transcript-head">Transcript</div>
           {messages.map((m, i) => (
             <div key={i} className={`msg msg-${m.role}`}>
-              <div className="msg-who">{m.role === "user" ? "you" : "oracle"}</div>
+              <div className="msg-who">{m.role === "user" ? "you" : "ocean"}</div>
               <div className="msg-text">{m.text}</div>
             </div>
           ))}
           {state === "thinking" && (
             <div className="msg msg-orb">
-              <div className="msg-who">oracle</div>
+              <div className="msg-who">ocean</div>
               <div className="msg-text"><span className="thinking-dots"><i></i><i></i><i></i></span></div>
             </div>
           )}
@@ -244,7 +244,7 @@ function App() {
       <div className="composer-area">
         {messages.length === 0 && (
           <div className="suggested">
-            {SUGGESTED.slice(0, 4).map((s) => (
+            {SUGGESTED.slice(0, 3).map((s) => (
               <button key={s} className="chip" onClick={() => send(s)}>
                 {s}
               </button>
