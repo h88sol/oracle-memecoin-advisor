@@ -82,6 +82,7 @@ function App() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          mode: "analysis",
           messages: [{ role: "user", content: userMessage }],
         }),
       });
@@ -221,20 +222,143 @@ function App() {
   );
 }
 
+const STARTER_QUESTIONS = [
+  "Why should I check my blood type before peptides?",
+  "What's the safest peptide for beginners?",
+  "How long should I cycle a peptide?",
+  "What's the difference between BPC-157 and TB-500?",
+  "Are GLP-1 peptides like Semaglutide safe long-term?",
+];
+
+const FEATURED_PEPTIDES = [
+  "BPC-157", "TB-500", "Semaglutide", "Tirzepatide", "CJC-1295", "Ipamorelin",
+  "Tesamorelin", "GHK-Cu", "Epitalon", "MOTS-c", "Selank", "Semax", "PT-141",
+  "Thymosin α-1", "DSIP", "5-Amino-1MQ",
+];
+
 function WelcomeStep({ onStart }) {
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState("");
+  const [chatLoading, setChatLoading] = useState(false);
+  const chatScrollRef = useRef(null);
+
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+    }
+  }, [chatMessages, chatLoading]);
+
+  const askChat = async (question) => {
+    const q = (question ?? chatInput).trim();
+    if (!q || chatLoading) return;
+    setChatInput("");
+    const next = [...chatMessages, { role: "user", text: q }];
+    setChatMessages(next);
+    setChatLoading(true);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode: "chat",
+          messages: next.map((m) => ({
+            role: m.role === "user" ? "user" : "assistant",
+            content: m.text,
+          })),
+        }),
+      });
+      if (!res.ok) throw new Error("api");
+      const data = await res.json();
+      const reply = String(data.reply || "").trim() || "I couldn't pull that up. Try rephrasing.";
+      setChatMessages((m) => [...m, { role: "orb", text: reply }]);
+    } catch {
+      setChatMessages((m) => [...m, { role: "orb", text: "Connection failed. Try again in a moment." }]);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
   return (
     <div className="welcome">
-      <div className="welcome-tag">// PEPTIDE ADVISOR</div>
+      <div className="welcome-tag">// PEPTIDE ADVISOR · BLOOD-TYPE MATCHED</div>
       <h1 className="welcome-title">
         The right peptide for <span className="hl">your body</span>.
       </h1>
       <p className="welcome-lede">
         Three quick questions — your blood type, your current peptide (if any), and your goal —
-        and we tell you whether what you're on fits, plus what you should consider next.
+        and the orb tells you whether what you're on fits, plus what to consider next.
       </p>
-      <button className="btn btn-primary btn-lg" onClick={onStart}>
-        Start analysis →
-      </button>
+
+      <div className="welcome-row">
+        <button className="btn btn-primary btn-lg" onClick={onStart}>
+          Start analysis →
+        </button>
+
+        <div className="ask-orb">
+          <div className="ask-orb-head">
+            <span className="ask-orb-dot" />
+            <span className="ask-orb-title">Ask the orb</span>
+          </div>
+
+          {chatMessages.length === 0 && !chatLoading && (
+            <div className="ask-orb-suggest">
+              {STARTER_QUESTIONS.map((q) => (
+                <button key={q} className="ask-chip" onClick={() => askChat(q)}>
+                  {q}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {(chatMessages.length > 0 || chatLoading) && (
+            <div className="ask-orb-thread" ref={chatScrollRef}>
+              {chatMessages.map((m, i) => (
+                <div key={i} className={`ask-msg ask-msg-${m.role}`}>
+                  <div className="ask-who">{m.role === "user" ? "you" : "ocean"}</div>
+                  <div className="ask-text">{m.text}</div>
+                </div>
+              ))}
+              {chatLoading && (
+                <div className="ask-msg ask-msg-orb">
+                  <div className="ask-who">ocean</div>
+                  <div className="ask-text"><span className="thinking-dots"><i></i><i></i><i></i></span></div>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="ask-orb-input">
+            <input
+              type="text"
+              placeholder="Ask anything about peptides..."
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  askChat();
+                }
+              }}
+              disabled={chatLoading}
+            />
+            <button
+              className="ask-send"
+              onClick={() => askChat()}
+              disabled={!chatInput.trim() || chatLoading}
+              aria-label="Send"
+            >→</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="featured-peptides" aria-hidden="true">
+        <div className="featured-label">// IN THE LIBRARY</div>
+        <div className="featured-track">
+          {[...FEATURED_PEPTIDES, ...FEATURED_PEPTIDES].map((p, i) => (
+            <span key={i} className="peptide-pill">{p}</span>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
