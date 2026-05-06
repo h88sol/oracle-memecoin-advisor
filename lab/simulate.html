@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PEPTYPE Lab — PK Simulator</title>
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/lab/lab.css" />
+</head>
+<body class="lab">
+<div class="lab-page">
+  <div class="lab-bg" aria-hidden>
+    <div class="lab-bg-grid"></div>
+    <div class="lab-bg-glow"></div>
+    <div class="lab-bg-vignette"></div>
+  </div>
+
+  <header class="lab-nav">
+    <a href="/lab/" class="lab-brand">
+      <span class="lab-brand-name">PEPTYPE</span>
+      <span class="lab-brand-divider">/</span>
+      <span class="lab-brand-section">LAB</span>
+    </a>
+    <nav class="lab-nav-links">
+      <a href="/" class="lab-back-link">← Analyzer</a>
+      <a href="/lab/" class="lab-nav-link">Overview</a>
+      <a href="/lab/simulate.html" class="lab-nav-link active">Simulate</a>
+      <a href="/lab/structure.html" class="lab-nav-link">Structure</a>
+      <a href="/lab/research.html" class="lab-nav-link">Research</a>
+    </nav>
+  </header>
+
+  <main class="lab-stage">
+    <div class="tool-header">
+      <span class="tool-num-badge">Tool 01 / Simulate</span>
+    </div>
+    <h1 class="tool-title">Pharmacokinetic simulator</h1>
+    <p class="tool-lede">
+      Live plasma concentration curve based on a 1-compartment model with first-order absorption and elimination.
+      Reference values from published peptide pharmacology — see plotted Cmax, Tmax, half-life, and steady-state behavior.
+    </p>
+
+    <div class="tool-layout">
+      <aside class="tool-controls">
+        <div class="field">
+          <label class="field-label" for="peptide">Peptide</label>
+          <select class="field-select" id="peptide"></select>
+          <div class="field-help" id="peptide-meta">—</div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="dose">Dose</label>
+          <div class="field-row">
+            <input class="field-input" id="dose" type="number" min="1" step="any" value="250" />
+            <select class="field-select" id="dose-unit" style="max-width: 88px;">
+              <option value="mcg">mcg</option>
+              <option value="mg">mg</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="weight">Body weight (kg)</label>
+          <input class="field-input" id="weight" type="number" min="30" max="200" step="1" value="80" />
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="freq">Dosing frequency</label>
+          <select class="field-select" id="freq">
+            <option value="single">Single dose</option>
+            <option value="24" selected>Once daily (24h)</option>
+            <option value="12">Twice daily (12h)</option>
+            <option value="8">Three times daily (8h)</option>
+            <option value="168">Once weekly (168h)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="duration">Duration (hours plotted)</label>
+          <select class="field-select" id="duration">
+            <option value="24">24h</option>
+            <option value="72" selected>72h (3 days)</option>
+            <option value="168">168h (1 week)</option>
+            <option value="336">336h (2 weeks)</option>
+          </select>
+        </div>
+      </aside>
+
+      <section class="tool-output">
+        <div class="readout-grid">
+          <div class="readout">
+            <div class="readout-label">Cmax</div>
+            <div class="readout-value" id="r-cmax">—<span class="readout-unit" id="r-cmax-unit">ng/ml</span></div>
+          </div>
+          <div class="readout">
+            <div class="readout-label">Tmax</div>
+            <div class="readout-value" id="r-tmax">—<span class="readout-unit">h</span></div>
+          </div>
+          <div class="readout">
+            <div class="readout-label">Half-life</div>
+            <div class="readout-value" id="r-thalf">—<span class="readout-unit">h</span></div>
+          </div>
+          <div class="readout">
+            <div class="readout-label">AUC₀–∞</div>
+            <div class="readout-value" id="r-auc">—<span class="readout-unit" id="r-auc-unit">ng·h/ml</span></div>
+          </div>
+        </div>
+
+        <div class="plot-frame">
+          <canvas id="pk-canvas" class="pk-canvas"></canvas>
+        </div>
+
+        <div style="display:flex; justify-content: space-between; margin-top: 12px;">
+          <div class="plot-axis-label">Time (hours)</div>
+          <div class="plot-axis-label" id="conc-unit-label">Plasma concentration (ng/ml)</div>
+        </div>
+
+        <div class="note-box">
+          <div class="note-box-title">// Model notes</div>
+          <div class="note-box-text" id="model-notes">
+            One-compartment PK model with first-order absorption (ka) and elimination (ke).
+            Bioavailability and clearance vary by route — values shown reflect subcutaneous administration in healthy adults.
+            Educational only — actual patient PK varies by absorption site, body composition, and concurrent medications.
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ============================================
+   Peptide PK reference data
+   Sources: published peptide pharmacology — values are typical adult subq
+   ============================================ */
+const PEPTIDES = {
+  "BPC-157": {
+    halfLifeH: 0.5,            // ~30 min plasma half-life
+    bioavailability: 0.30,     // subq absorption (estimate)
+    Vd_L_per_kg: 0.4,
+    ka_per_h: 4.0,             // fast absorption
+    notes: "Pentadecapeptide. Short plasma half-life but local tissue effects persist. Subq fast onset.",
+    unit: "ng/ml",
+  },
+  "TB-500 (Thymosin β-4)": {
+    halfLifeH: 2.5,
+    bioavailability: 0.50,
+    Vd_L_per_kg: 0.35,
+    ka_per_h: 1.8,
+    notes: "Thymosin Beta-4 fragment. Distributes to soft tissue. Plasma t½ ~2-3h, but tissue retention longer.",
+    unit: "ng/ml",
+  },
+  "CJC-1295 (no DAC)": {
+    halfLifeH: 0.5,
+    bioavailability: 0.55,
+    Vd_L_per_kg: 0.30,
+    ka_per_h: 2.5,
+    notes: "GHRH analog without DAC modification. Short t½ — paired with Ipamorelin for GH pulse.",
+    unit: "ng/ml",
+  },
+  "CJC-1295 with DAC": {
+    halfLifeH: 192,            // ~8 days due to albumin binding
+    bioavailability: 0.85,
+    Vd_L_per_kg: 0.10,
+    ka_per_h: 0.4,
+    notes: "DAC modification binds to serum albumin. Half-life ~6-8 days enables weekly dosing.",
+    unit: "ng/ml",
+  },
+  "Ipamorelin": {
+    halfLifeH: 2.0,
+    bioavailability: 0.55,
+    Vd_L_per_kg: 0.40,
+    ka_per_h: 2.2,
+    notes: "Selective GHRP. t½ ~2h. Paired with CJC-1295 for synergistic GH release.",
+    unit: "ng/ml",
+  },
+  "Tesamorelin": {
+    halfLifeH: 0.45,
+    bioavailability: 0.40,
+    Vd_L_per_kg: 0.15,
+    ka_per_h: 3.0,
+    notes: "Stabilized GHRH analog. Short plasma t½ but pulsatile GH effect lasts hours.",
+    unit: "ng/ml",
+  },
+  "Semaglutide": {
+    halfLifeH: 168,            // ~1 week
+    bioavailability: 0.89,
+    Vd_L_per_kg: 0.10,
+    ka_per_h: 0.06,            // slow absorption — peak ~1-3 days
+    notes: "GLP-1 receptor agonist. Albumin-bound, long half-life (~7 days). Once-weekly dosing.",
+    unit: "ng/ml",
+  },
+  "Tirzepatide": {
+    halfLifeH: 117,            // ~5 days
+    bioavailability: 0.80,
+    Vd_L_per_kg: 0.12,
+    ka_per_h: 0.05,
+    notes: "Dual GIP / GLP-1 agonist. Half-life ~5 days. Once-weekly dosing.",
+    unit: "ng/ml",
+  },
+  "GHK-Cu": {
+    halfLifeH: 0.7,
+    bioavailability: 0.20,     // mainly topical / subq
+    Vd_L_per_kg: 0.5,
+    ka_per_h: 1.5,
+    notes: "Copper tripeptide. Plasma t½ ~40 min. Tissue and skin retention longer.",
+    unit: "ng/ml",
+  },
+  "Epitalon": {
+    halfLifeH: 1.0,
+    bioavailability: 0.40,
+    Vd_L_per_kg: 0.45,
+    ka_per_h: 2.0,
+    notes: "Tetrapeptide. Short plasma t½ but downstream telomerase effects persist.",
+    unit: "ng/ml",
+  },
+  "MOTS-c": {
+    halfLifeH: 1.5,
+    bioavailability: 0.45,
+    Vd_L_per_kg: 0.40,
+    ka_per_h: 1.6,
+    notes: "Mitochondrial-derived peptide (16 aa). Plasma t½ ~1-2h.",
+    unit: "ng/ml",
+  },
+  "Selank": {
+    halfLifeH: 0.5,
+    bioavailability: 0.50,     // intranasal often used
+    Vd_L_per_kg: 0.5,
+    ka_per_h: 3.5,
+    notes: "Synthetic heptapeptide. Short plasma t½ but anxiolytic effects last hours.",
+    unit: "ng/ml",
+  },
+  "Semax": {
+    halfLifeH: 0.4,
+    bioavailability: 0.50,
+    Vd_L_per_kg: 0.55,
+    ka_per_h: 4.0,
+    notes: "ACTH(4-10) analog. Very short plasma t½. Often dosed multiple times daily.",
+    unit: "ng/ml",
+  },
+};
+
+/* ============================================
+   PK math — 1-compartment, first-order absorption + elimination
+   Bateman equation:
+     C(t) = (F * D * ka) / (V * (ka - ke)) * (exp(-ke*t) - exp(-ka*t))
+   Multi-dose superposition for repeated dosing.
+   ============================================ */
+function singleDoseC(t, dose_mcg, F, ka, ke, V_ml) {
+  // Avoid singularity if ka == ke
+  if (Math.abs(ka - ke) < 1e-6) {
+    return (F * dose_mcg * ka * t * Math.exp(-ke * t)) / V_ml;
+  }
+  return (F * dose_mcg * ka) / (V_ml * (ka - ke)) * (Math.exp(-ke * t) - Math.exp(-ka * t));
+}
+
+function multiDoseC(t, dose_mcg, F, ka, ke, V_ml, tau, nDoses) {
+  // tau = dosing interval (h). For single dose, nDoses=1.
+  let total = 0;
+  for (let n = 0; n < nDoses; n++) {
+    const dt = t - n * tau;
+    if (dt < 0) continue;
+    total += singleDoseC(dt, dose_mcg, F, ka, ke, V_ml);
+  }
+  return total;
+}
+
+/* Plot the curve === */
+function getCanvasContext(canvas) {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  const ctx = canvas.getContext("2d");
+  ctx.scale(dpr, dpr);
+  return { ctx, w: rect.width, h: rect.height };
+}
+
+function plotCurve(canvas, points, opts) {
+  const { ctx, w, h } = getCanvasContext(canvas);
+  const padL = 56, padR = 12, padT = 14, padB = 30;
+  const plotW = w - padL - padR;
+  const plotH = h - padT - padB;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Compute axis ranges
+  const tMax = opts.tMax;
+  const cMax = Math.max(...points.map(p => p[1])) * 1.15 || 1;
+
+  // Horizontal grid + Y labels
+  ctx.strokeStyle = "rgba(180,200,230,0.06)";
+  ctx.lineWidth = 1;
+  ctx.fillStyle = "rgba(138,153,179,0.7)";
+  ctx.font = "10px JetBrains Mono, monospace";
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "right";
+
+  const ySteps = 5;
+  for (let i = 0; i <= ySteps; i++) {
+    const cy = padT + plotH * (i / ySteps);
+    const value = cMax * (1 - i / ySteps);
+    ctx.beginPath();
+    ctx.moveTo(padL, cy);
+    ctx.lineTo(padL + plotW, cy);
+    ctx.stroke();
+    ctx.fillText(value.toFixed(value < 1 ? 2 : value < 10 ? 1 : 0), padL - 8, cy);
+  }
+
+  // X axis labels
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  const xSteps = 6;
+  for (let i = 0; i <= xSteps; i++) {
+    const cx = padL + plotW * (i / xSteps);
+    const t = tMax * (i / xSteps);
+    ctx.fillText(t < 24 ? `${t.toFixed(0)}h` : `${(t/24).toFixed(0)}d`, cx, padT + plotH + 8);
+  }
+
+  // Plot curve
+  ctx.strokeStyle = "hsl(178, 70%, 55%)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  points.forEach((p, i) => {
+    const cx = padL + (p[0] / tMax) * plotW;
+    const cy = padT + plotH * (1 - p[1] / cMax);
+    if (i === 0) ctx.moveTo(cx, cy);
+    else ctx.lineTo(cx, cy);
+  });
+  ctx.stroke();
+
+  // Fill under curve
+  ctx.lineTo(padL + plotW, padT + plotH);
+  ctx.lineTo(padL, padT + plotH);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, padT, 0, padT + plotH);
+  grad.addColorStop(0, "hsla(178, 70%, 55%, 0.25)");
+  grad.addColorStop(1, "hsla(178, 70%, 55%, 0.0)");
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Draw Cmax marker
+  if (opts.cmax && opts.tmax !== undefined) {
+    const cx = padL + (opts.tmax / tMax) * plotW;
+    const cy = padT + plotH * (1 - opts.cmax / cMax);
+    ctx.fillStyle = "hsl(178, 100%, 70%)";
+    ctx.beginPath();
+    ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(180,200,230,0.4)";
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy); ctx.lineTo(cx, padT + plotH); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+}
+
+/* ============================================ */
+const peptideSelect = document.getElementById("peptide");
+const peptideMeta = document.getElementById("peptide-meta");
+const doseInput = document.getElementById("dose");
+const doseUnit = document.getElementById("dose-unit");
+const weightInput = document.getElementById("weight");
+const freqSelect = document.getElementById("freq");
+const durationSelect = document.getElementById("duration");
+
+Object.keys(PEPTIDES).forEach(name => {
+  const opt = document.createElement("option");
+  opt.value = name;
+  opt.textContent = name;
+  peptideSelect.appendChild(opt);
+});
+
+const canvas = document.getElementById("pk-canvas");
+
+function format(n) {
+  if (n === 0) return "0";
+  if (Math.abs(n) >= 100) return n.toFixed(0);
+  if (Math.abs(n) >= 10) return n.toFixed(1);
+  if (Math.abs(n) >= 1) return n.toFixed(2);
+  return n.toFixed(3);
+}
+
+function recompute() {
+  const name = peptideSelect.value;
+  const p = PEPTIDES[name];
+  if (!p) return;
+  peptideMeta.textContent = p.notes;
+
+  let dose = parseFloat(doseInput.value);
+  if (doseUnit.value === "mg") dose = dose * 1000; // mg -> mcg
+  const weight = parseFloat(weightInput.value);
+  const tauStr = freqSelect.value;
+  const duration = parseFloat(durationSelect.value);
+
+  const ka = p.ka_per_h;
+  const ke = Math.LN2 / p.halfLifeH;
+  const Vd_ml = p.Vd_L_per_kg * weight * 1000; // convert L to ml
+
+  const tau = tauStr === "single" ? duration + 1 : parseFloat(tauStr);
+  const nDoses = tauStr === "single" ? 1 : Math.floor(duration / tau) + 1;
+
+  const samples = 240;
+  const points = [];
+  let cmax = 0, tmaxAt = 0;
+  for (let i = 0; i <= samples; i++) {
+    const t = (i / samples) * duration;
+    const c = multiDoseC(t, dose * p.bioavailability, 1, ka, ke, Vd_ml, tau, nDoses);
+    points.push([t, c]);
+    if (c > cmax) { cmax = c; tmaxAt = t; }
+  }
+
+  // For a single dose, the analytical Tmax = ln(ka/ke) / (ka-ke)
+  let tmaxAnalytic = tmaxAt;
+  if (Math.abs(ka - ke) > 1e-6) {
+    const tm = Math.log(ka / ke) / (ka - ke);
+    if (tm > 0 && tm < duration && nDoses === 1) tmaxAnalytic = tm;
+  }
+
+  // AUC ∞ for single dose: F * D / (V * ke) (in ng*h/ml when input is mcg => ng = mcg*1000? actually 1 mcg in ml volume = 1000 ng/ml... let's keep as nominal)
+  // Here our concentration is in (mcg / ml) — convert to ng/ml: multiply by 1000
+  const conc_to_ng = 1000;
+  const cmax_ng = cmax * conc_to_ng;
+  const aucInf = (dose * p.bioavailability * conc_to_ng) / (Vd_ml * ke); // ng*h/ml
+
+  document.getElementById("r-cmax").innerHTML = format(cmax_ng) + '<span class="readout-unit">ng/ml</span>';
+  document.getElementById("r-tmax").innerHTML = format(tmaxAnalytic) + '<span class="readout-unit">h</span>';
+  document.getElementById("r-thalf").innerHTML = format(p.halfLifeH) + '<span class="readout-unit">h</span>';
+  document.getElementById("r-auc").innerHTML = format(aucInf) + '<span class="readout-unit">ng·h/ml</span>';
+
+  // Convert points to ng/ml for plotting
+  const plotPoints = points.map(p2 => [p2[0], p2[1] * conc_to_ng]);
+  plotCurve(canvas, plotPoints, { tMax: duration, cmax: cmax_ng, tmax: tmaxAnalytic });
+}
+
+[peptideSelect, doseInput, doseUnit, weightInput, freqSelect, durationSelect].forEach(el => {
+  el.addEventListener("input", recompute);
+  el.addEventListener("change", recompute);
+});
+
+window.addEventListener("resize", recompute);
+recompute();
+</script>
+</body>
+</html>

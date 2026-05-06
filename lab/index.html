@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PEPTYPE Lab — Pharmacology & research tools</title>
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/lab/lab.css" />
+</head>
+<body class="lab">
+<div class="lab-page">
+  <div class="lab-bg" aria-hidden>
+    <div class="lab-bg-grid"></div>
+    <div class="lab-bg-glow"></div>
+    <div class="lab-bg-vignette"></div>
+  </div>
+
+  <header class="lab-nav">
+    <a href="/lab/" class="lab-brand">
+      <span class="lab-brand-name">PEPTYPE</span>
+      <span class="lab-brand-divider">/</span>
+      <span class="lab-brand-section">LAB</span>
+    </a>
+    <nav class="lab-nav-links">
+      <a href="/" class="lab-back-link">← Analyzer</a>
+      <a href="/lab/" class="lab-nav-link active">Overview</a>
+      <a href="/lab/simulate.html" class="lab-nav-link">Simulate</a>
+      <a href="/lab/structure.html" class="lab-nav-link">Structure</a>
+      <a href="/lab/research.html" class="lab-nav-link">Research</a>
+    </nav>
+  </header>
+
+  <main class="lab-stage">
+    <section class="lab-hero">
+      <div class="lab-hero-tag">// PEPTIDE LAB · v1.0</div>
+      <h1 class="lab-hero-title">
+        Pharmacology &amp; research tools <span class="hl">in one place</span>.
+      </h1>
+      <p class="lab-hero-lede">
+        Three deep tools for serious peptide users — simulate plasma kinetics in real time,
+        explore molecular structures in 3D, and search peer-reviewed research without leaving the page.
+      </p>
+    </section>
+
+    <section class="tool-grid">
+      <a href="/lab/simulate.html" class="tool-card">
+        <div class="tool-card-num">// TOOL 01</div>
+        <div class="tool-card-name">Simulate</div>
+        <div class="tool-card-desc">
+          Live pharmacokinetic curves. Input dose, body weight, frequency — get plasma concentration,
+          Cmax, Tmax, half-life decay, AUC. Compare two protocols side by side.
+        </div>
+        <div class="tool-card-meta">
+          <span>1-compartment PK</span>
+          <span class="tool-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="/lab/structure.html" class="tool-card">
+        <div class="tool-card-num">// TOOL 02</div>
+        <div class="tool-card-name">Structure</div>
+        <div class="tool-card-desc">
+          Interactive 3D molecule viewer. Rotate, zoom, inspect amino acid sequences pulled live
+          from the RCSB Protein Data Bank. See what you're actually injecting.
+        </div>
+        <div class="tool-card-meta">
+          <span>RCSB PDB</span>
+          <span class="tool-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="/lab/research.html" class="tool-card">
+        <div class="tool-card-num">// TOOL 03</div>
+        <div class="tool-card-name">Research</div>
+        <div class="tool-card-desc">
+          Peer-reviewed search engine over PubMed. Ask a question — get the most relevant peptide
+          studies with summaries, abstracts, and direct citations. No bro-science.
+        </div>
+        <div class="tool-card-meta">
+          <span>NCBI PubMed</span>
+          <span class="tool-arrow">→</span>
+        </div>
+      </a>
+    </section>
+
+    <section style="margin-top: 64px; padding: 28px 32px; border: 1px solid var(--lab-line); border-radius: 14px; background: var(--lab-surface); display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 280px;">
+        <div style="font-family: var(--lab-mono); font-size: 10.5px; letter-spacing: 0.2em; color: var(--lab-accent); text-transform: uppercase; margin-bottom: 6px;">// WHY LAB</div>
+        <div style="font-family: var(--lab-sans); font-size: 18px; font-weight: 500; color: var(--lab-ink); line-height: 1.4;">
+          The analyzer tells you which peptide. Lab tells you <em style="font-style: normal; color: var(--lab-accent);">how, why, and what the science actually says</em>.
+        </div>
+      </div>
+      <a href="/" class="lab-btn">← Run an analysis first</a>
+    </section>
+  </main>
+</div>
+<script>
+  function copyPeptypeCA(btn) {
+    const ca = "BZWbMU57Lq8Bun6WxVpB2kuUoKiNxwBaLZMzVajqpump";
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(ca);
+    }
+    const orig = btn.textContent;
+    btn.textContent = "Copied ✓";
+    setTimeout(function () { btn.textContent = orig; }, 1800);
+  }
+</script>
+</body>
+</html>
