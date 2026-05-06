@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PEPTYPE Lab — 3D Structure Viewer</title>
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/lab/lab.css" />
+<style>
+  #stage3d {
+    width: 100%;
+    height: 480px;
+    background: #04080d;
+    border-radius: 10px;
+    border: 1px solid var(--lab-line);
+    overflow: hidden;
+    position: relative;
+  }
+  .stage3d-loading {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--lab-ink-soft);
+    font-family: var(--lab-mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    pointer-events: none;
+  }
+  .seq-block {
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: var(--lab-bg-2);
+    border: 1px solid var(--lab-line);
+    border-radius: 10px;
+    font-family: var(--lab-mono);
+    font-size: 13px;
+    color: var(--lab-accent);
+    word-break: break-all;
+    line-height: 1.6;
+    letter-spacing: 0.05em;
+  }
+  .seq-label {
+    font-size: 10px;
+    color: var(--lab-ink-faint);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .controls-3d {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .ctrl-chip {
+    font-family: var(--lab-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 7px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--lab-line);
+    background: var(--lab-surface);
+    color: var(--lab-ink-soft);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .ctrl-chip:hover { color: var(--lab-ink); border-color: var(--lab-line-strong); }
+  .ctrl-chip.active { color: var(--lab-accent); border-color: var(--lab-accent); background: var(--lab-accent-soft); }
+</style>
+</head>
+<body class="lab">
+<div class="lab-page">
+  <div class="lab-bg" aria-hidden>
+    <div class="lab-bg-grid"></div>
+    <div class="lab-bg-glow"></div>
+    <div class="lab-bg-vignette"></div>
+  </div>
+
+  <header class="lab-nav">
+    <a href="/lab/" class="lab-brand">
+      <span class="lab-brand-name">PEPTYPE</span>
+      <span class="lab-brand-divider">/</span>
+      <span class="lab-brand-section">LAB</span>
+    </a>
+    <nav class="lab-nav-links">
+      <a href="/" class="lab-back-link">← Analyzer</a>
+      <a href="/lab/" class="lab-nav-link">Overview</a>
+      <a href="/lab/simulate.html" class="lab-nav-link">Simulate</a>
+      <a href="/lab/structure.html" class="lab-nav-link active">Structure</a>
+      <a href="/lab/research.html" class="lab-nav-link">Research</a>
+    </nav>
+  </header>
+
+  <main class="lab-stage">
+    <div class="tool-header">
+      <span class="tool-num-badge">Tool 02 / Structure</span>
+    </div>
+    <h1 class="tool-title">3D molecular viewer</h1>
+    <p class="tool-lede">
+      Interactive amino acid backbone for major peptides. Click and drag to rotate, scroll to zoom.
+      Sequences shown in single-letter code — every letter is one amino acid in the chain.
+    </p>
+
+    <div class="tool-layout">
+      <aside class="tool-controls">
+        <div class="field">
+          <label class="field-label" for="peptide-3d">Peptide</label>
+          <select class="field-select" id="peptide-3d"></select>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Render style</label>
+          <div class="controls-3d" id="style-controls">
+            <button class="ctrl-chip active" data-style="cartoon">Cartoon</button>
+            <button class="ctrl-chip" data-style="ball+stick">Ball &amp; stick</button>
+            <button class="ctrl-chip" data-style="ribbon">Ribbon</button>
+            <button class="ctrl-chip" data-style="surface">Surface</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Spin</label>
+          <div class="controls-3d">
+            <button class="ctrl-chip active" id="spin-toggle">On</button>
+            <button class="ctrl-chip" id="reset-cam">Reset view</button>
+          </div>
+        </div>
+
+        <div class="note-box" style="margin-top: 4px;">
+          <div class="note-box-title">// CHAIN INFO</div>
+          <div class="note-box-text" id="chain-info">—</div>
+        </div>
+      </aside>
+
+      <section class="tool-output">
+        <div id="stage3d">
+          <div class="stage3d-loading" id="loading-msg">// LOADING STRUCTURE...</div>
+        </div>
+
+        <div class="seq-block">
+          <div class="seq-label">// AMINO ACID SEQUENCE (1-letter code)</div>
+          <div id="aa-seq">—</div>
+        </div>
+
+        <div class="note-box">
+          <div class="note-box-title">// ABOUT</div>
+          <div class="note-box-text" id="peptide-about">—</div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- 3DMol.js viewer (loaded from CDN) -->
+<script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+<script>
+/* ============================================
+   Peptide structures — RCSB PDB IDs where available,
+   otherwise we synthesize a model from sequence.
+   ============================================ */
+const PEPTIDES_3D = {
+  "BPC-157": {
+    sequence: "GEPPPGKPADDAGLV",
+    pdb: null,
+    aa_count: 15,
+    description: "Pentadecapeptide derived from a stable fragment of human gastric juice protein BPC. Promotes angiogenesis, accelerates tendon-to-bone healing, modulates nitric oxide pathways.",
+    chain: "Linear pentadecapeptide, no disulfide bonds",
+  },
+  "TB-500 (Thymosin β-4)": {
+    sequence: "SDKPDMAEIEKFDKSKLKKTETQEKNPLPSKETIEQEKQAGES",
+    pdb: "1HJ0",
+    aa_count: 43,
+    description: "Thymosin Beta-4 — 43 amino-acid peptide that regulates G-actin sequestration. Promotes cell migration, angiogenesis, and tissue repair.",
+    chain: "Single-chain 43 aa, intrinsically disordered in solution",
+  },
+  "Semaglutide": {
+    sequence: "HAEGTFTSDVSSYLEGQAAKEFIAWLVRGRG",
+    pdb: "4ZGM",
+    aa_count: 31,
+    description: "GLP-1 receptor agonist analog. Albumin-bound for ~7 day half-life. Used for type 2 diabetes and weight management (Wegovy / Ozempic).",
+    chain: "GLP-1 backbone with C18 fatty diacid at K20 for albumin binding",
+  },
+  "Tirzepatide": {
+    sequence: "YXEGTFTSDYSIYLDKQAAXEFVNWLLAGGPSSGAPPPS",
+    pdb: null,
+    aa_count: 39,
+    description: "Dual GIP / GLP-1 receptor agonist. Once-weekly subq. Strongest glycemic and weight effect to date in clinical trials.",
+    chain: "39 aa, modified with C20 fatty diacid for albumin binding",
+  },
+  "CJC-1295": {
+    sequence: "YADAIFTQSYRKVLAQLSARKLLQDIMSR",
+    pdb: null,
+    aa_count: 29,
+    description: "Modified GHRH analog with 4 amino-acid substitutions (D-Ala, Gln, Ala, Leu) for enzymatic stability. With DAC (drug affinity complex), binds serum albumin for week-long half-life.",
+    chain: "29 aa GHRH analog",
+  },
+  "Ipamorelin": {
+    sequence: "GHWFG-NH2 (pseudo)",
+    pdb: null,
+    aa_count: 5,
+    description: "Selective GHRP-6 mimetic. Pentapeptide that triggers GH release without raising cortisol or prolactin.",
+    chain: "Pentapeptide (Aib-His-D-2-Nal-D-Phe-Lys-NH2)",
+  },
+  "Tesamorelin": {
+    sequence: "YADAIFTNSYRKVLGQLSARKLLQDIMSRQQGESNQERGARARL",
+    pdb: null,
+    aa_count: 44,
+    description: "Stabilized GHRH(1-44) analog with N-terminal trans-3-hexenoic acid. Approved for HIV-related lipodystrophy; reduces visceral adipose tissue.",
+    chain: "44 aa GHRH(1-44) with N-terminal lipid",
+  },
+  "GHK-Cu": {
+    sequence: "GHK · Cu²⁺",
+    pdb: null,
+    aa_count: 3,
+    description: "Glycyl-L-histidyl-L-lysine bound to copper. Tripeptide-copper complex. Activates ~4000 genes toward youthful expression patterns. Used topically for skin and hair.",
+    chain: "Tripeptide-copper(II) complex",
+  },
+  "Epitalon": {
+    sequence: "AEDG",
+    pdb: null,
+    aa_count: 4,
+    description: "Tetrapeptide synthesized from sequences in pineal gland extract. Reported to upregulate telomerase activity and modulate sleep.",
+    chain: "Linear tetrapeptide (Ala-Glu-Asp-Gly)",
+  },
+  "MOTS-c": {
+    sequence: "MRWQEMGYIFYPRKLR",
+    pdb: null,
+    aa_count: 16,
+    description: "Mitochondrial-derived peptide (16 aa) encoded in mitochondrial DNA. Regulates metabolic homeostasis via AMPK pathway.",
+    chain: "16 aa mitochondrial peptide",
+  },
+  "Selank": {
+    sequence: "TKPRPGP (with N-terminal pGlu)",
+    pdb: null,
+    aa_count: 7,
+    description: "Synthetic heptapeptide based on tuftsin. Anxiolytic and nootropic effects via cholinergic and serotonergic pathways. Often delivered intranasally.",
+    chain: "Heptapeptide analog of tuftsin",
+  },
+  "Semax": {
+    sequence: "MEHFPGP",
+    pdb: null,
+    aa_count: 7,
+    description: "Synthetic ACTH(4-10) analog. Heptapeptide with neuroprotective and nootropic effects. Used in Russia for stroke and cognitive disorders.",
+    chain: "ACTH(4-10) analog, 7 aa",
+  },
+};
+
+/* ============================================
+   Build a simple synthetic helix structure from amino acid sequence.
+   We generate a PDB string for a phi/psi-defined α-helix.
+   ============================================ */
+function buildHelixPDB(seq, structure) {
+  // Strip non-standard chars
+  const clean = seq.replace(/[^ACDEFGHIKLMNPQRSTVWY]/g, "");
+  if (clean.length === 0) return null;
+
+  // Use idealised α-helix backbone
+  // Φ = -57°, Ψ = -47° → repeat translation/rotation per residue
+  // Simplified: place CA atoms along a helix
+  let pdb = "HEADER    PEPTYPE LAB SYNTHETIC " + structure + "\n";
+  const RADIUS = 2.3;     // helix radius
+  const RISE = 1.5;       // axial rise per residue
+  const TURN_DEG = 100;   // degrees per residue
+  let serial = 1;
+
+  for (let i = 0; i < clean.length; i++) {
+    const aa = clean[i];
+    const ang = (TURN_DEG * Math.PI / 180) * i;
+    const x = RADIUS * Math.cos(ang);
+    const y = RADIUS * Math.sin(ang);
+    const z = RISE * i;
+    const aa3 = AA_THREE[aa] || "ALA";
+    pdb += "ATOM  " + String(serial++).padStart(5) + "  CA  " + aa3 + " A" + String(i+1).padStart(4)
+        + "    "
+        + x.toFixed(3).padStart(8) + y.toFixed(3).padStart(8) + z.toFixed(3).padStart(8)
+        + "  1.00  0.00           C\n";
+  }
+  pdb += "END\n";
+  return pdb;
+}
+
+const AA_THREE = {
+  A:"ALA", C:"CYS", D:"ASP", E:"GLU", F:"PHE",
+  G:"GLY", H:"HIS", I:"ILE", K:"LYS", L:"LEU",
+  M:"MET", N:"ASN", P:"PRO", Q:"GLN", R:"ARG",
+  S:"SER", T:"THR", V:"VAL", W:"TRP", Y:"TYR",
+};
+
+/* ============================================ */
+const peptideSelect = document.getElementById("peptide-3d");
+const stage = document.getElementById("stage3d");
+const loadingMsg = document.getElementById("loading-msg");
+const seqEl = document.getElementById("aa-seq");
+const aboutEl = document.getElementById("peptide-about");
+const chainInfoEl = document.getElementById("chain-info");
+
+Object.keys(PEPTIDES_3D).forEach(name => {
+  const opt = document.createElement("option");
+  opt.value = name;
+  opt.textContent = name;
+  peptideSelect.appendChild(opt);
+});
+
+let viewer;
+let currentStyle = "cartoon";
+let isSpinning = true;
+
+function initViewer() {
+  if (!window.$3Dmol) {
+    loadingMsg.textContent = "// FAILED TO LOAD 3D LIBRARY";
+    return;
+  }
+  viewer = $3Dmol.createViewer(stage, {
+    backgroundColor: 0x04080d,
+    antialias: true,
+  });
+  loadingMsg.style.display = "none";
+}
+
+function applyStyle() {
+  if (!viewer) return;
+  viewer.setStyle({}, {});
+  if (currentStyle === "cartoon") {
+    viewer.setStyle({}, { cartoon: { color: "spectrum", thickness: 0.6 } });
+  } else if (currentStyle === "ball+stick") {
+    viewer.setStyle({}, { stick: { radius: 0.18, color: "spectrum" }, sphere: { radius: 0.5, color: "spectrum" } });
+  } else if (currentStyle === "ribbon") {
+    viewer.setStyle({}, { cartoon: { style: "trace", color: "spectrum", thickness: 0.4 } });
+  } else if (currentStyle === "surface") {
+    viewer.setStyle({}, { cartoon: { color: "spectrum" } });
+    viewer.removeAllSurfaces();
+    viewer.addSurface($3Dmol.SurfaceType.VDW, { opacity: 0.55, color: "white" });
+  }
+  viewer.render();
+}
+
+function loadPeptide(name) {
+  const p = PEPTIDES_3D[name];
+  if (!p || !viewer) return;
+
+  seqEl.textContent = p.sequence;
+  aboutEl.textContent = p.description;
+  chainInfoEl.innerHTML = `<strong>${p.aa_count} amino acids</strong> · ${p.chain}`;
+
+  viewer.removeAllModels();
+  viewer.removeAllSurfaces();
+
+  if (p.pdb) {
+    // Try loading from RCSB
+    loadingMsg.style.display = "flex";
+    loadingMsg.textContent = "// FETCHING PDB " + p.pdb + "...";
+    fetch("https://files.rcsb.org/download/" + p.pdb + ".pdb")
+      .then(r => r.text())
+      .then(txt => {
+        viewer.addModel(txt, "pdb");
+        applyStyle();
+        viewer.zoomTo();
+        if (isSpinning) viewer.spin("y");
+        loadingMsg.style.display = "none";
+      })
+      .catch(() => {
+        // Fall back to synthetic
+        const synth = buildHelixPDB(p.sequence, name);
+        if (synth) {
+          viewer.addModel(synth, "pdb");
+          applyStyle();
+          viewer.zoomTo();
+          if (isSpinning) viewer.spin("y");
+        }
+        loadingMsg.style.display = "none";
+      });
+  } else {
+    // Synthetic helix
+    const synth = buildHelixPDB(p.sequence, name);
+    if (synth) {
+      viewer.addModel(synth, "pdb");
+      applyStyle();
+      viewer.zoomTo();
+      if (isSpinning) viewer.spin("y");
+    }
+  }
+}
+
+document.querySelectorAll("#style-controls .ctrl-chip").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#style-controls .ctrl-chip").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentStyle = btn.dataset.style;
+    applyStyle();
+  });
+});
+
+document.getElementById("spin-toggle").addEventListener("click", (e) => {
+  isSpinning = !isSpinning;
+  e.target.textContent = isSpinning ? "On" : "Off";
+  e.target.classList.toggle("active", isSpinning);
+  if (viewer) viewer.spin(isSpinning ? "y" : false);
+});
+
+document.getElementById("reset-cam").addEventListener("click", () => {
+  if (viewer) { viewer.zoomTo(); viewer.render(); }
+});
+
+peptideSelect.addEventListener("change", () => loadPeptide(peptideSelect.value));
+
+window.addEventListener("load", () => {
+  initViewer();
+  loadPeptide(peptideSelect.value);
+});
+</script>
+</body>
+</html>

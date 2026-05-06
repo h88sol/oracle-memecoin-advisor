@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PEPTYPE Lab — Research Engine</title>
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/lab/lab.css" />
+<style>
+  .search-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .search-input {
+    flex: 1;
+    font-family: var(--lab-sans);
+    font-size: 15px;
+    padding: 14px 18px;
+    background: var(--lab-bg-2);
+    border: 1px solid var(--lab-line);
+    border-radius: 10px;
+    color: var(--lab-ink);
+    outline: none;
+    transition: border-color .15s;
+  }
+  .search-input:focus { border-color: var(--lab-accent); }
+  .search-input::placeholder { color: var(--lab-ink-faint); }
+  .search-btn {
+    font-family: var(--lab-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 14px 22px;
+    border-radius: 10px;
+    background: var(--lab-accent);
+    color: #04161a;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all .15s;
+  }
+  .search-btn:hover { background: hsl(178, 80%, 65%); }
+  .search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .quick-queries {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+  .quick-query {
+    font-family: var(--lab-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: var(--lab-surface);
+    border: 1px solid var(--lab-line);
+    color: var(--lab-ink-soft);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .quick-query:hover {
+    color: var(--lab-accent);
+    border-color: var(--lab-accent);
+    background: var(--lab-accent-soft);
+  }
+
+  .results-count {
+    font-family: var(--lab-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--lab-ink-faint);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .paper {
+    border: 1px solid var(--lab-line);
+    background: var(--lab-bg-2);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-bottom: 12px;
+    transition: all .15s;
+  }
+  .paper:hover {
+    border-color: var(--lab-line-strong);
+    background: var(--lab-surface);
+  }
+  .paper-title {
+    font-family: var(--lab-sans);
+    font-size: 16.5px;
+    font-weight: 500;
+    color: var(--lab-ink);
+    line-height: 1.4;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+  .paper-meta {
+    font-family: var(--lab-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--lab-ink-faint);
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .paper-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .paper-meta-tag {
+    color: var(--lab-accent);
+  }
+  .paper-abstract {
+    font-family: var(--lab-sans);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--lab-ink-soft);
+    margin: 0 0 12px;
+  }
+  .paper-link {
+    font-family: var(--lab-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--lab-accent);
+    text-decoration: none;
+  }
+  .paper-link:hover { text-decoration: underline; }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--lab-ink-faint);
+    font-family: var(--lab-sans);
+    font-size: 14px;
+  }
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: var(--lab-accent);
+    font-family: var(--lab-mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+  }
+  .err {
+    padding: 16px 20px;
+    background: rgba(220, 70, 70, 0.08);
+    border: 1px solid rgba(220, 70, 70, 0.3);
+    border-radius: 10px;
+    color: hsl(0, 70%, 70%);
+    font-family: var(--lab-sans);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body class="lab">
+<div class="lab-page">
+  <div class="lab-bg" aria-hidden>
+    <div class="lab-bg-grid"></div>
+    <div class="lab-bg-glow"></div>
+    <div class="lab-bg-vignette"></div>
+  </div>
+
+  <header class="lab-nav">
+    <a href="/lab/" class="lab-brand">
+      <span class="lab-brand-name">PEPTYPE</span>
+      <span class="lab-brand-divider">/</span>
+      <span class="lab-brand-section">LAB</span>
+    </a>
+    <nav class="lab-nav-links">
+      <a href="/" class="lab-back-link">← Analyzer</a>
+      <a href="/lab/" class="lab-nav-link">Overview</a>
+      <a href="/lab/simulate.html" class="lab-nav-link">Simulate</a>
+      <a href="/lab/structure.html" class="lab-nav-link">Structure</a>
+      <a href="/lab/research.html" class="lab-nav-link active">Research</a>
+    </nav>
+  </header>
+
+  <main class="lab-stage">
+    <div class="tool-header">
+      <span class="tool-num-badge">Tool 03 / Research</span>
+    </div>
+    <h1 class="tool-title">Peer-reviewed search</h1>
+    <p class="tool-lede">
+      Live search over the NCBI PubMed database — 36+ million biomedical citations.
+      Results sorted by relevance with abstracts and direct links to the original papers.
+    </p>
+
+    <div class="search-row">
+      <input class="search-input" id="q" type="text" placeholder='Try: "BPC-157 tendon healing" or "semaglutide cardiovascular outcomes"' />
+      <button class="search-btn" id="search-go">Search</button>
+    </div>
+
+    <div class="quick-queries">
+      <button class="quick-query" data-q="BPC-157 tendon healing">BPC-157 tendon healing</button>
+      <button class="quick-query" data-q="semaglutide weight loss">Semaglutide weight loss</button>
+      <button class="quick-query" data-q="tirzepatide cardiovascular">Tirzepatide cardiovascular</button>
+      <button class="quick-query" data-q="thymosin beta-4 muscle">TB-500 muscle repair</button>
+      <button class="quick-query" data-q="CJC-1295 ipamorelin growth hormone">CJC-1295 + Ipamorelin</button>
+      <button class="quick-query" data-q="epitalon telomere">Epitalon telomere</button>
+      <button class="quick-query" data-q="MOTS-c metabolism mitochondrial">MOTS-c metabolism</button>
+      <button class="quick-query" data-q="GHK-Cu skin healing">GHK-Cu skin</button>
+    </div>
+
+    <div id="results"></div>
+  </main>
+</div>
+
+<script>
+const NCBI = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
+
+async function search(query) {
+  const results = document.getElementById("results");
+  results.innerHTML = '<div class="loading">// SEARCHING PUBMED...</div>';
+
+  try {
+    // Step 1: ESearch — get IDs
+    const searchRes = await fetch(
+      `${NCBI}/esearch.fcgi?db=pubmed&retmode=json&retmax=10&sort=relevance&term=${encodeURIComponent(query)}`
+    );
+    const searchData = await searchRes.json();
+    const ids = searchData.esearchresult?.idlist || [];
+    const total = parseInt(searchData.esearchresult?.count || "0");
+
+    if (ids.length === 0) {
+      results.innerHTML = '<div class="empty-state">No results. Try different keywords.</div>';
+      return;
+    }
+
+    // Step 2: ESummary — titles, authors, dates
+    const summaryRes = await fetch(
+      `${NCBI}/esummary.fcgi?db=pubmed&retmode=json&id=${ids.join(",")}`
+    );
+    const summaryData = await summaryRes.json();
+
+    // Step 3: EFetch — abstracts (XML format, easier to parse than text mode)
+    const fetchRes = await fetch(
+      `${NCBI}/efetch.fcgi?db=pubmed&rettype=abstract&retmode=text&id=${ids.join(",")}`
+    );
+    const abstractText = await fetchRes.text();
+
+    // Parse abstracts: PubMed text format separates entries with double newlines
+    const blocks = abstractText.split(/\n\n(?=\d+\.\s)|\n\n(?=PMID)/);
+    const abstractMap = {};
+    blocks.forEach(block => {
+      const pmidMatch = block.match(/PMID:\s*(\d+)/);
+      const absMatch = block.match(/(?:^|\n)([A-Z][^\n]{40,}\n[\s\S]+?)(?=\n\n|\nPMID:|\nDOI:|\nCopyright|$)/m);
+      if (pmidMatch) {
+        const pmid = pmidMatch[1];
+        // Extract abstract by finding the longest meaningful paragraph
+        const lines = block.split("\n");
+        const longLines = lines.filter(l => l.length > 100 && !l.match(/^(Author|Affiliation|©|DOI:|PMID|PMCID|http)/));
+        if (longLines.length > 0) {
+          abstractMap[pmid] = longLines.join(" ").trim();
+        }
+      }
+    });
+
+    // Render
+    let html = `<div class="results-count">// ${ids.length} of ${total.toLocaleString()} results · sorted by relevance</div>`;
+
+    ids.forEach(id => {
+      const s = summaryData.result?.[id];
+      if (!s) return;
+      const authors = (s.authors || []).slice(0, 4).map(a => a.name).join(", ");
+      const date = s.pubdate || "";
+      const journal = s.fulljournalname || s.source || "";
+      const title = (s.title || "").replace(/\.$/, "");
+      const abstract = abstractMap[id] || "Abstract unavailable — click through for full text.";
+
+      html += `
+        <article class="paper">
+          <h3 class="paper-title">${escapeHtml(title)}</h3>
+          <div class="paper-meta">
+            <span class="paper-meta-item paper-meta-tag">${escapeHtml(date)}</span>
+            <span class="paper-meta-item">${escapeHtml(journal)}</span>
+            ${authors ? `<span class="paper-meta-item">${escapeHtml(authors)}${s.authors && s.authors.length > 4 ? ", et al." : ""}</span>` : ""}
+            <span class="paper-meta-item">PMID: ${id}</span>
+          </div>
+          <p class="paper-abstract">${escapeHtml(abstract.slice(0, 480))}${abstract.length > 480 ? "..." : ""}</p>
+          <a class="paper-link" href="https://pubmed.ncbi.nlm.nih.gov/${id}/" target="_blank" rel="noopener noreferrer">
+            Read full paper on PubMed →
+          </a>
+        </article>
+      `;
+    });
+
+    results.innerHTML = html;
+  } catch (e) {
+    results.innerHTML = `<div class="err">Couldn't reach PubMed (${e.message}). Try again in a moment.</div>`;
+  }
+}
+
+function escapeHtml(s) {
+  if (s == null) return "";
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+document.getElementById("search-go").addEventListener("click", () => {
+  const q = document.getElementById("q").value.trim();
+  if (q) search(q);
+});
+
+document.getElementById("q").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    const q = e.target.value.trim();
+    if (q) search(q);
+  }
+});
+
+document.querySelectorAll(".quick-query").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const q = btn.dataset.q;
+    document.getElementById("q").value = q;
+    search(q);
+  });
+});
+
+// Auto-load BPC-157 results on first visit
+window.addEventListener("load", () => {
+  const initial = "BPC-157 tendon healing";
+  document.getElementById("q").value = initial;
+  search(initial);
+});
+</script>
+</body>
+</html>
